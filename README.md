@@ -2,7 +2,7 @@
 
 Estrutura inicial de backend para um sistema de cinema usando Node.js, TypeScript, Prisma e PostgreSQL.
 
-No estado atual, o repositório concentra a modelagem do banco, a configuração do Prisma e a infraestrutura local com Docker. Nenhuma camada adiconal foi configurada ainda.
+No estado atual, o repositorio concentra a modelagem do banco, a configuracao do Prisma e a infraestrutura local com Docker. Nenhuma camada adicional foi configurada ainda.
 
 ## Stack
 
@@ -78,6 +78,64 @@ O `docker-compose.yml` sobe um PostgreSQL 16 com os seguintes dados para desenvo
 - port: `5432`
 - database: `cinema_db`
 - user: `cinema_user`
+
+## Boas praticas com Git
+
+Fluxo recomendado para criar uma branch e subir o trabalho para o remoto:
+
+1. Atualize a branch principal antes de comecar:
+
+```bash
+git checkout main
+git pull origin main
+```
+
+2. Crie uma branch descritiva para a tarefa:
+
+```bash
+git checkout -b feat/cadastro-funcionario
+```
+
+Sugestao de convencao de nomes:
+
+- `feat/...` para nova funcionalidade
+- `fix/...` para correcao de bug
+- `docs/...` para documentacao
+- `chore/...` para manutencao
+
+3. Faca as alteracoes e revise o que mudou:
+
+```bash
+git status
+```
+
+4. Adicione apenas os arquivos relacionados ao trabalho:
+
+```bash
+git add README.md prisma/schema.prisma
+```
+
+5. Crie um commit com mensagem objetiva:
+
+```bash
+git commit -m "docs: adiciona fluxo de branch e push"
+```
+
+6. Envie a branch para o remoto pela primeira vez:
+
+```bash
+git push -u origin feat/cadastro-funcionario
+```
+
+7. Abra um Pull Request da sua branch para `main`.
+
+Boas praticas para o dia a dia:
+
+- Evite trabalhar direto na `main`.
+- Prefira commits pequenos e com escopo claro.
+- Revise o `git status` antes de usar `git add`.
+- Rode as validacoes do projeto antes de subir a branch.
+- Use `git push` nas proximas atualizacoes, depois do primeiro `git push -u`.
 
 ## Observacoes
 
