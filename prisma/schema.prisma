@@ -1,0 +1,80 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ===================================
+// CINEMA, SALA, ASSENTOS e ENDEREÇOS
+// ===================================
+
+model Cinema {
+  idCinema   Int    @id @default(autoincrement()) @map("id_cinema")
+  idEndereco Int    @unique @map("id_endereco")
+  nome       String
+  cnpj       String @unique
+  telefone   String
+  email      String
+
+  endereco     Endereco      @relation(fields: [idEndereco], references: [idEndereco])
+  funcionarios Funcionario[]
+
+  @@map("cinemas")
+}
+
+model Endereco {
+  idEndereco Int    @id @default(autoincrement()) @map("id_endereco")
+  logradouro String
+  numero     String
+  bairro     String
+  cidade     String
+  estado     String
+  cep        String
+
+  cinema Cinema?
+
+  @@map("enderecos")
+}
+
+// =======================
+// USUÁRIOS E FUNCIONÁRIOS
+// =======================
+
+model Usuario {
+  idUsuario      Int      @id @default(autoincrement()) @map("id_usuario")
+  nome           String
+  email          String   @unique
+  senha          String
+  cpf            String   @unique
+  telefone       String
+  dataNascimento DateTime @map("data_nascimento")
+
+  funcionario Funcionario?
+
+  @@map("usuarios")
+}
+
+model Funcionario {
+  idFuncionario   Int      @id @default(autoincrement()) @map("id_funcionario")
+  idUsuario       Int      @unique @map("id_usuario")
+  idCinema        Int      @map("id_cinema")
+  nome            String
+  email           String
+  cpf             String
+  telefone        String
+  cargo           String
+  dataContratacao DateTime @map("data_contratacao")
+
+  usuario Usuario @relation(fields: [idUsuario], references: [idUsuario])
+  cinema  Cinema  @relation(fields: [idCinema], references: [idCinema])
+
+  @@map("funcionarios")
+}
