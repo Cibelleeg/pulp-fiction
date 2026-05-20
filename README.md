@@ -142,3 +142,6 @@ Boas praticas para o dia a dia:
 - O arquivo `.env` esta ignorado no Git e nao deve ser versionado.
 - No Prisma 7, a URL do banco fica centralizada em `prisma.config.ts`.
 - Se quiser recriar o banco do zero em ambiente local, remova o volume Docker antes de subir novamente.
+
+
+oi ciciccccccc
