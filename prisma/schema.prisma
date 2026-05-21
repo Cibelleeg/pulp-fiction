@@ -91,3 +91,17 @@ model Funcionario {
 
   @@map("funcionarios")
 }
+
+// =======================
+//FILME E PEDIDO//
+// =======================
+
+model Filme {
+  idFilme                  Int      @id @default(autoincrement()) @map("id_filme")
+  titulo                   String
+  sinopse                  String
+  duracao                  DateTime
+  classificacao_indicativa Int
+  genero                   String
+  data_lancamento          DateTime
+}
