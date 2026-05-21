@@ -26,8 +26,21 @@ model Cinema {
 
   endereco     Endereco      @relation(fields: [idEndereco], references: [idEndereco])
   funcionarios Funcionario[]
+  salas        Sala[]
 
   @@map("cinemas")
+}
+
+model Sala {
+  idSala     Int    @id @default(autoincrement()) @map("id_sala")
+  idCinema   Int    @map("id_cinema")
+  nome       String
+  capacidade Int
+  tipo       String
+
+  cinema Cinema @relation(fields: [idCinema], references: [idCinema])
+
+  @@map("salas")
 }
 
 model Endereco {
