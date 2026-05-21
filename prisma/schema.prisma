@@ -101,7 +101,7 @@ model Filme {
   titulo                   String
   sinopse                  String
   duracao                  DateTime
-  classificacaoIndicativa  Int        @map(classificacao_indicativa)
+  classificacaoIndicativa  Int        @map("classificacao_indicativa")
   genero                   String
-  dataLancamento           DateTime   @map(data_lancamento)
+  dataLancamento           DateTime   @map("data_lancamento")
 }
