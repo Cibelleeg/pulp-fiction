@@ -97,11 +97,11 @@ model Funcionario {
 // =======================
 
 model Filme {
-  idFilme                  Int      @id @default(autoincrement()) @map("id_filme")
+  idFilme                  Int        @id @default(autoincrement()) @map("id_filme")
   titulo                   String
   sinopse                  String
   duracao                  DateTime
-  classificacao_indicativa Int
+  classificacaoIndicativa  Int        @map(classificacao_indicativa)
   genero                   String
-  data_lancamento          DateTime
+  dataLancamento           DateTime   @map(data_lancamento)
 }
