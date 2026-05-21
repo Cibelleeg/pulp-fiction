@@ -38,7 +38,9 @@ model Sala {
   capacidade Int
   tipo       String
 
-  cinema Cinema @relation(fields: [idCinema], references: [idCinema])
+  cinema   Cinema    @relation(fields: [idCinema], references: [idCinema])
+  assentos Assento[]
+  sessaos  Sessao[]
 
   @@map("salas")
 }
@@ -71,6 +73,8 @@ model Usuario {
   dataNascimento DateTime @map("data_nascimento")
 
   funcionario Funcionario?
+  ingressos   Ingresso[]
+  pedidos     Pedido[]
 
   @@map("usuarios")
 }
@@ -97,11 +101,79 @@ model Funcionario {
 // =======================
 
 model Filme {
-  idFilme                  Int        @id @default(autoincrement()) @map("id_filme")
-  titulo                   String
-  sinopse                  String
-  duracao                  DateTime
-  classificacaoIndicativa  Int        @map("classificacao_indicativa")
-  genero                   String
-  dataLancamento           DateTime   @map("data_lancamento")
+  idFilme                 Int      @id @default(autoincrement()) @map("id_filme")
+  titulo                  String
+  sinopse                 String
+  duracao                 DateTime
+  classificacaoIndicativa Int      @map("classificacao_indicativa")
+  genero                  String
+  dataLancamento          DateTime @map("data_lancamento")
+
+  sessaos                 Sessao[]
 }
+// =======================
+// Ingressos, Assentos, Pedidos e Sessões
+// =======================
+
+model Ingresso {
+  idIngresso  Int      @id @default(autoincrement()) @map("id_ingresso")
+  idSessao    Int      @map("id_sessao")
+  idUsuario   Int      @map("id_usuario")
+  idAssento   Int      @map("id_assento")
+  idPedido    Int      @map("id_pedido")
+  tipo        String
+  preco       Int
+  status      String
+  dataEmissao DateTime @map("data_emissao")
+
+  sessao  Sessao  @relation(fields: [idSessao], references: [idSessao])
+  usuario Usuario @relation(fields: [idUsuario], references: [idUsuario])
+  assento Assento @relation(fields: [idAssento], references: [idAssento])
+  pedido  Pedido  @relation(fields: [idPedido], references: [idPedido])
+
+  @@map("ingressos")
+}
+
+model Assento {
+  idAssento Int    @id @default(autoincrement()) @map("id_assento")
+  idSala    Int    @map("id_sala")
+  numero    String
+  fila      String
+  tipo      String
+
+  sala      Sala       @relation(fields: [idSala], references: [idSala])
+  ingressos Ingresso[]
+
+  @@map("assentos")
+}
+
+model Pedido {
+  idPedido   Int      @id @default(autoincrement()) @map("id_pedido")
+  idUsuario  Int      @map("id_usuario")
+  total      Int
+  status     String
+  dataPedido DateTime @map("data_pedido")
+
+  usuario   Usuario    @relation(fields: [idUsuario], references: [idUsuario])
+  ingressos Ingresso[]
+
+  @@map("pedidos")
+}
+
+model Sessao {
+  idSessao  Int      @id @default(autoincrement()) @map("id_sessao")
+  idSala    Int      @map("id_sala")
+  idFilme   Int      @map("id_filme")
+  dataHora  DateTime @map("data_hora")
+  idioma    String
+  formato   String
+  precoBase Int      @map("preco_base")
+
+  sala      Sala       @relation(fields: [idSala], references: [idSala])
+  filme     Filme      @relation(fields: [idFilme], references: [idFilme])
+  ingressos Ingresso[]
+
+  @@map("sessoes")
+}
+
+
