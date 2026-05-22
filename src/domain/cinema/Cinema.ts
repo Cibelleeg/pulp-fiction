@@ -1,4 +1,4 @@
-export interface Adress {
+export interface Address {
     id: number,
     logradouro: string,
     numero: string,
@@ -14,5 +14,5 @@ export interface Cinema {
     cnpj: string,
     phoneNumber: string,
     email: string,
-    address: Adress
+    address: Address
 }
