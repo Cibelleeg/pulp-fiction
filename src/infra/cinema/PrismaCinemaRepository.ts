@@ -33,7 +33,7 @@ export class PrismaCinemaRepository implements CinemaRepository {
         }))
     }
 
-    async create (data: Omit<Cinema, "id"> & { address: Omit<Cinema["address"], "id"> }): Promise<Cinema> {
+    async create (data: Omit<Cinema, "id" | "address"> & { address: Omit<Cinema["address"], "id"> }): Promise<Cinema> {
         const createdCinema = await this.prisma.cinema.create({
             data: {
                 nome: data.name,
