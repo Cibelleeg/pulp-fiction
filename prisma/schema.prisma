@@ -183,8 +183,21 @@ model Sessao {
 }
 
 // =======================
-// ITEM PEDIDO, PAGAMENTO E AVALIAÇÃO
+// ITEM PEDIDO, PAGAMENTO, PRODUTO E AVALIAÇÃO
 // =======================
+
+model Produto {
+  idProduto  Int    @id @default(autoincrement()) @map("id_produto")
+  nome       String
+  descricao  String
+  preco      Float
+  estoque    Int
+  categoria  String
+
+  itensPedido ItemPedido[]
+
+  @@map("produtos")
+}
 
 model ItemPedido {
   idItemPedido  Int   @id @default(autoincrement()) @map("id_item_pedido")
@@ -195,7 +208,7 @@ model ItemPedido {
   Subtotal      Float
 
   pedido  Pedido  @relation(fields: [idPedido], references: [idPedido])
-  //produto Produto @relation(fields: [idProduto], references: [idProduto])
+  produto Produto @relation(fields: [idProduto], references: [idProduto])
 }
 
 model Pagamento {
