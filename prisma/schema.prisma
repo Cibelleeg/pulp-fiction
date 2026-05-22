@@ -13,8 +13,9 @@ datasource db {
 }
 
 // ===================================
-// CINEMA, SALA, ASSENTOS e ENDEREÇOS
+// CINEMA, SALA e ENDEREÇOS
 // ===================================
+
 
 model Cinema {
   idCinema   Int    @id @default(autoincrement()) @map("id_cinema")
