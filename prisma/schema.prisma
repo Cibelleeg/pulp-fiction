@@ -75,6 +75,7 @@ model Usuario {
   funcionario Funcionario?
   ingressos   Ingresso[]
   pedidos     Pedido[]
+  avaliacao   Avaliacao[]
 
   @@map("usuarios")
 }
@@ -97,7 +98,7 @@ model Funcionario {
 }
 
 // =======================
-//FILME E PEDIDO//
+//FILME
 // =======================
 
 model Filme {
@@ -109,10 +110,12 @@ model Filme {
   genero                  String
   dataLancamento          DateTime @map("data_lancamento")
 
-  sessaos                 Sessao[]
+  sessaos   Sessao[]
+  avaliacao Avaliacao[]
 }
+
 // =======================
-// Ingressos, Assentos, Pedidos e Sessões
+// INGRESSOS, ASSENTOS, PEDIDOS E SESSÕES
 // =======================
 
 model Ingresso {
@@ -154,8 +157,10 @@ model Pedido {
   status     String
   dataPedido DateTime @map("data_pedido")
 
-  usuario   Usuario    @relation(fields: [idUsuario], references: [idUsuario])
-  ingressos Ingresso[]
+  usuario    Usuario      @relation(fields: [idUsuario], references: [idUsuario])
+  ingressos  Ingresso[]
+  itemPedido ItemPedido[]
+  pagamento  Pagamento? 
 
   @@map("pedidos")
 }
@@ -176,4 +181,41 @@ model Sessao {
   @@map("sessoes")
 }
 
+// =======================
+// ITEM PEDIDO, PAGAMENTO E AVALIAÇÃO
+// =======================
 
+model ItemPedido {
+  idItemPedido  Int   @id @default(autoincrement()) @map("id_item_pedido")
+  idPedido      Int   @map("id_pedido")
+  idProduto     Int   @map("id_produto")
+  quantidade    Int
+  precoUnitario Float
+  Subtotal      Float
+
+  pedido  Pedido  @relation(fields: [idPedido], references: [idPedido])
+  //produto Produto @relation(fields: [idProduto], references: [idProduto])
+}
+
+model Pagamento {
+  idPagamento    Int      @id @default(autoincrement()) @map("id_pagamento")
+  idPedido       Int      @unique @map("id_pedido")
+  formaPagamento String
+  valor          Float
+  status         String
+  dataPagamento  DateTime @map("data_pagamento")
+
+  pedido Pedido @relation(fields: [idPedido], references: [idPedido])
+}
+
+model Avaliacao {
+  idAvaliacao    Int      @id @default(autoincrement()) @map("id_avaliacao")
+  idUsuario      Int      @unique @map("id_usuario")
+  idFilme        Int      @map("id_filme")
+  nota           Float
+  comentario     String
+  data_avaliacao DateTime
+
+  usuario Usuario @relation(fields: [idUsuario], references: [idUsuario])
+  filme   Filme   @relation(fields: [idFilme], references: [idFilme])
+}
