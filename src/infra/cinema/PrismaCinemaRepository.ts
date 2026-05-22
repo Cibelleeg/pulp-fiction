@@ -24,4 +24,21 @@ export class PrismaCinemaRepository implements CinemaRepository {
             address: "",
         }));
     }
+    
+    async findById(id: number): Promise<Cinema | null> {
+        const cinema = await this.prisma.cinema.findUnique({
+            where: { idCinema: id },
+        });
+
+        if (!cinema) return null;
+
+        return {
+            id: cinema.idCinema,
+            name: cinema.nome,
+            cnpj: cinema.cnpj,
+            phoneNumber: cinema.telefone,
+            email: cinema.email,
+            address: "",
+        };
+    }
 }
