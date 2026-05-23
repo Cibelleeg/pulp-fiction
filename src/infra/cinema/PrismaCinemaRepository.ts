@@ -71,4 +71,33 @@ export class PrismaCinemaRepository implements CinemaRepository {
             },
         };
     }
+
+    async findById(id: number): Promise<Cinema | null> {
+        const cinema = await this.prisma.cinema.findUnique({
+            where: { idCinema: id },
+            include: { endereco: true },
+        });
+
+        if (!cinema) {
+            console.error(`Cinema with ID ${id} not found.`);
+            return null;
+        };
+
+        return {
+            id: cinema.idCinema,
+            name: cinema.nome,
+            cnpj: cinema.cnpj,
+            phoneNumber: cinema.telefone,
+            email: cinema.email,
+            address: {
+                id: cinema.endereco.idEndereco,
+                logradouro: cinema.endereco.logradouro,
+                numero: cinema.endereco.numero,
+                bairro: cinema.endereco.bairro,
+                cidade: cinema.endereco.cidade,
+                estado: cinema.endereco.estado,
+                cep: cinema.endereco.cep,
+            },
+        };
+    }
 }
