@@ -1,48 +1,56 @@
 import { GetCinemaUseCase, GetCinemaByIdUseCase } from "../application/cinema/GetCinemaUseCase.js";
+import type { CreateCinemaUseCase } from "../application/cinema/CreateCinemaUseCase.js";
 import type { Request, Response } from "express";
 
 
 export class CinemaController {
     constructor(
-        private useCase: GetCinemaUseCase, 
-        private useCaseById: GetCinemaByIdUseCase
+        private getAllCinemasUseCase: GetCinemaUseCase,
+        private useCaseById: GetCinemaByIdUseCase,
+        private createCinemaUseCase: CreateCinemaUseCase
     ) { }
 
     async getAllCinemas(req: Request, res: Response): Promise<void> {
 
         try {
-            const cinemas = await this.useCase.execute();
+            const cinemas = await this.getAllCinemasUseCase.execute();
             res.status(200).json(cinemas);
         } catch (error) {
             res.status(500).json({ error: "Internal Server Error." });
         }
         
     }
-
-
     
     async getCinemaById(req: Request, res: Response): Promise<void> {
-  try {
-    const id = Number(req.params.id);
+        try {
+        const id = Number(req.params.id);
 
-    if (isNaN(id)) {
-      res.status(400).json({ error: "ID inválido." });
-      return;
+        if (isNaN(id)) {
+        res.status(400).json({ error: "ID inválido." });
+        return;
+        }
+
+        const cinema = await this.useCaseById.executeById(id);
+
+        if (!cinema) {
+            res.status(404).json({ error: "Cinema não encontrado." });
+            return;
+        }
+
+        res.status(200).json(cinema);
+        } catch (error) {
+            res.status(500).json({ error: "Internal Server Error." });
+        }
     }
 
-    const cinema = await this.useCaseById.executeById(id);
+    async createCinema(req: Request, res: Response): Promise<void> {
 
-    if (!cinema) {
-      res.status(404).json({ error: "Cinema não encontrado." });
-      return;
+        try {
+            const cinemaData = req.body;
+            const createdCinema = await this.createCinemaUseCase.execute(cinemaData);
+            res.status(201).json(createdCinema);
+        } catch (error) {
+            res.status(500).json({ error: "Internal Server Error." });
+        }
     }
-
-    res.status(200).json(cinema);
-  } catch (error) {
-    res.status(500).json({ error: "Internal Server Error." });
-  }
 }
-}
-
-
-
