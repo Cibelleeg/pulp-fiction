@@ -100,4 +100,10 @@ export class PrismaCinemaRepository implements CinemaRepository {
             },
         };
     }
+    async deleteById(id: number): Promise<void> {
+        await this.prisma.cinema.delete({
+            where: { idCinema: id },
+        });
+       
+    }
 }

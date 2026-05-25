@@ -8,4 +8,6 @@ export interface CinemaRepository {
     findById(id: number): Promise<Cinema | null>;
 
     create(data: CreateCinemaInput): Promise<Cinema>;
+
+    deleteById(id: number): Promise<void>;
 }
