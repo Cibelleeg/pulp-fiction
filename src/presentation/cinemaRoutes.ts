@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { CinemaController } from "./CinemaController.js";
-import { GetCinemaUseCase,  GetCinemaByIdUseCase, DeleteCinemaByIdUseCase } from "../application/cinema/GetCinemaUseCase.js";
+import { GetCinemaUseCase,  GetCinemaByIdUseCase, DeleteCinemaByIdUseCase, UpdateCinemaByIdUseCase } from "../application/cinema/GetCinemaUseCase.js";
 import { CreateCinemaUseCase } from "../application/cinema/CreateCinemaUseCase.js";
 import { PrismaCinemaRepository } from "../infra/cinema/PrismaCinemaRepository.js";
 
@@ -14,7 +14,9 @@ const createCinemaUseCase = new CreateCinemaUseCase(cinemaRepository);
 
 const deleteCinemaByIdUseCase = new DeleteCinemaByIdUseCase(cinemaRepository);
 
-const cinemaController = new CinemaController(getCinemaUseCase, getCinemaByIdUseCase, createCinemaUseCase, deleteCinemaByIdUseCase);
+const updateCinemaByIdUseCase = new UpdateCinemaByIdUseCase(cinemaRepository);
+
+const cinemaController = new CinemaController(getCinemaUseCase, getCinemaByIdUseCase, createCinemaUseCase,  deleteCinemaByIdUseCase, updateCinemaByIdUseCase);
 
 
 const router = Router();
@@ -26,5 +28,7 @@ router.get("/:id", (req, res) => cinemaController.getCinemaById(req, res));
 router.post("/", (req, res) => cinemaController.createCinema(req, res));
 
 router.delete("/:id", (req, res) => cinemaController.deleteCinemaById(req, res));
+
+router.patch("/:id", (req, res) => cinemaController.updateCinemaById(req, res));
 
 export { router as cinemaRoutes };

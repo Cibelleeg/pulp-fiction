@@ -1,4 +1,4 @@
-import { GetCinemaUseCase, GetCinemaByIdUseCase } from "../application/cinema/GetCinemaUseCase.js";
+import { GetCinemaUseCase, GetCinemaByIdUseCase, UpdateCinemaByIdUseCase, DeleteCinemaByIdUseCase } from "../application/cinema/GetCinemaUseCase.js";
 import type { CreateCinemaUseCase } from "../application/cinema/CreateCinemaUseCase.js";
 import type { Request, Response } from "express";
 
@@ -8,7 +8,8 @@ export class CinemaController {
         private getAllCinemasUseCase: GetCinemaUseCase,
         private useCaseById: GetCinemaByIdUseCase,
         private createCinemaUseCase: CreateCinemaUseCase,
-        private deleteCinemaByIdUseCase: GetCinemaByIdUseCase
+        private deleteCinemaByIdUseCase: DeleteCinemaByIdUseCase,
+        private updateCinemaByIdUseCase: UpdateCinemaByIdUseCase
     ) { }
 
     async getAllCinemas(req: Request, res: Response): Promise<void> {
@@ -63,6 +64,24 @@ export class CinemaController {
             }
             await this.deleteCinemaByIdUseCase.executeDeleteById(id);
             res.status(200).json({ message: "Cinema deleted successfully." });
+        } catch (error) {
+            if (error instanceof Error && error.message === "Cinema not found.") {
+                res.status(404).json({ error: "Cinema not found." });
+                return;
+            }
+            res.status(500).json({ error: "Internal Server Error." });
+        }
+    }
+    async updateCinemaById(req: Request, res: Response): Promise<void> {
+        try {
+            const id = Number(req.params.id);
+            if (isNaN(id)) {
+                res.status(400).json({ error: "ID inválido." });
+                return;
+            }
+            const cinemaData = req.body;
+            const updatedCinema = await this.updateCinemaByIdUseCase.executeUpdateById(id, cinemaData);
+            res.status(200).json(updatedCinema);
         } catch (error) {
             if (error instanceof Error && error.message === "Cinema not found.") {
                 res.status(404).json({ error: "Cinema not found." });
