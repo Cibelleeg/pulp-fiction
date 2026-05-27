@@ -1,7 +1,7 @@
-import { GetCinemaUseCase, GetCinemaByIdUseCase} from "../application/cinema/GetCinemaUseCase.js";
-import { DeleteCinemaByIdUseCase } from "../application/cinema/DeleteCinemaUseCase.js";
-import { UpdateCinemaByIdUseCase } from "../application/cinema/UpdateCinemaUseCase.js";
-import type { CreateCinemaUseCase } from "../application/cinema/CreateCinemaUseCase.js";
+import { GetCinemaUseCase, GetCinemaByIdUseCase} from "../../application/cinema/GetCinemaUseCase.js";
+import { DeleteCinemaByIdUseCase } from "../../application/cinema/DeleteCinemaUseCase.js";
+import { UpdateCinemaByIdUseCase } from "../../application/cinema/UpdateCinemaUseCase.js";
+import type { CreateCinemaUseCase } from "../../application/cinema/CreateCinemaUseCase.js";
 import type { Request, Response } from "express";
 
 
