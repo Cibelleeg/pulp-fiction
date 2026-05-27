@@ -13,4 +13,5 @@ export class GetCinemaByIdUseCase {
     async executeById(id: number): Promise<Cinema | null> {
   return await this.cinemaRepository.findById(id)
     }
-};
+}
+

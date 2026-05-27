@@ -100,4 +100,49 @@ export class PrismaCinemaRepository implements CinemaRepository {
             },
         };
     }
+    async deleteById(id: number): Promise<void> {
+        await this.prisma.cinema.delete({
+            where: { idCinema: id },
+        });
+       
+    }
+    async updateById(id: number, data: Omit<Cinema, "id"> & { address: Omit<Cinema["address"], "id"> }): Promise<Cinema> {
+        const updatedCinema = await this.prisma.cinema.update({
+            where: { idCinema: id },
+            data: {
+                nome: data.name,
+                cnpj: data.cnpj,
+                telefone: data.phoneNumber,
+                email: data.email,
+                endereco: {
+                    update: {
+                        logradouro: data.address.logradouro,
+                        numero: data.address.numero,
+                        bairro: data.address.bairro,
+                        cidade: data.address.cidade,
+                        estado: data.address.estado,
+                        cep: data.address.cep,
+                    },
+                },
+            },
+            include: { endereco: true },
+        });
+
+        return {
+            id: updatedCinema.idCinema,
+            name: updatedCinema.nome,
+            cnpj: updatedCinema.cnpj,
+            phoneNumber: updatedCinema.telefone,
+            email: updatedCinema.email,
+            address: {
+                id: updatedCinema.endereco.idEndereco,
+                logradouro: updatedCinema.endereco.logradouro,
+                numero: updatedCinema.endereco.numero,
+                bairro: updatedCinema.endereco.bairro,
+                cidade: updatedCinema.endereco.cidade,
+                estado: updatedCinema.endereco.estado,
+                cep: updatedCinema.endereco.cep,
+            },
+        };
+    }
 }
