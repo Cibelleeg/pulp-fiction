@@ -1,4 +1,6 @@
-import { GetCinemaUseCase, GetCinemaByIdUseCase, UpdateCinemaByIdUseCase, DeleteCinemaByIdUseCase } from "../application/cinema/GetCinemaUseCase.js";
+import { GetCinemaUseCase, GetCinemaByIdUseCase} from "../application/cinema/GetCinemaUseCase.js";
+import { DeleteCinemaByIdUseCase } from "../application/cinema/DeleteCinemaUseCase.js";
+import { UpdateCinemaByIdUseCase } from "../application/cinema/UpdateCinemaUseCase.js";
 import type { CreateCinemaUseCase } from "../application/cinema/CreateCinemaUseCase.js";
 import type { Request, Response } from "express";
 
@@ -63,7 +65,7 @@ export class CinemaController {
                 return;
             }
             await this.deleteCinemaByIdUseCase.executeDeleteById(id);
-            res.status(200).json({ message: "Cinema deleted successfully." });
+            res.status(204).send();
         } catch (error) {
             if (error instanceof Error && error.message === "Cinema not found.") {
                 res.status(404).json({ error: "Cinema not found." });

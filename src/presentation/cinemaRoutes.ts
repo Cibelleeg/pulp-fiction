@@ -1,6 +1,8 @@
 import { Router } from "express";
 import { CinemaController } from "./CinemaController.js";
-import { GetCinemaUseCase,  GetCinemaByIdUseCase, DeleteCinemaByIdUseCase, UpdateCinemaByIdUseCase } from "../application/cinema/GetCinemaUseCase.js";
+import { GetCinemaUseCase,  GetCinemaByIdUseCase} from "../application/cinema/GetCinemaUseCase.js";
+import { DeleteCinemaByIdUseCase } from "../application/cinema/DeleteCinemaUseCase.js";
+import { UpdateCinemaByIdUseCase } from "../application/cinema/UpdateCinemaUseCase.js";
 import { CreateCinemaUseCase } from "../application/cinema/CreateCinemaUseCase.js";
 import { PrismaCinemaRepository } from "../infra/cinema/PrismaCinemaRepository.js";
 

@@ -9,31 +9,9 @@ export class GetCinemaUseCase {
     }
 }
 export class GetCinemaByIdUseCase {
-    executeDeleteById(id: number) {
-        throw new Error("Method not implemented.");
-    }
     constructor(private cinemaRepository: CinemaRepository) {}
     async executeById(id: number): Promise<Cinema | null> {
   return await this.cinemaRepository.findById(id)
     }
 }
-export class DeleteCinemaByIdUseCase {
-    constructor(private cinemaRepository: CinemaRepository) {}
-    async executeDeleteById(id: number): Promise<void> {
-        const cinema = await this.cinemaRepository.findById(id);
-        if (!cinema) { 
-            throw new Error("Cinema not found.");
-        }
-        await this.cinemaRepository.deleteById(id);
-    }
-}
-export class UpdateCinemaByIdUseCase {
-    constructor(private cinemaRepository: CinemaRepository) {}
-    async executeUpdateById(id: number, data: Omit<Cinema, "id"> & { address: Omit<Cinema["address"], "id"> }): Promise<Cinema> {
-        const cinema = await this.cinemaRepository.findById(id);
-        if (!cinema) {
-            throw new Error("Cinema not found.");
-        }
-        return await this.cinemaRepository.updateById(id, data);
-    }
-}
+
