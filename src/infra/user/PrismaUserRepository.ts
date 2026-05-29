@@ -14,6 +14,7 @@ export class PrismaUserRepository implements UserRepository {
             cpf: user.cpf,
             phoneNumber: user.telefone,
             birthDate: user.dataNascimento,
+            role: user.role
         }))
     }
     
