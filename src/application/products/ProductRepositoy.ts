@@ -1,4 +1,4 @@
-import type { Product } from "../../domain/product/Product.js";
+import type { Product } from "../../domain/products/Product.js";
 
 export type CreateProductInput = Omit<Product, "id">;
 

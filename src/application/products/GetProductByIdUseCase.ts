@@ -1,5 +1,5 @@
 import type { ProductRepository} from "./ProductRepositoy.js";
-import type { Product } from "../../domain/product/Product.js";
+import type { Product } from "../../domain/products/Product.js";
 
 export class GetProductByIdUseCase {
     constructor(private productRepository: ProductRepository) {}
