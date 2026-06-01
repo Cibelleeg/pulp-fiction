@@ -9,3 +9,9 @@ export interface User {
   birthDate: Date
   role: Role
 }
+
+export interface AuthenticatedUser {
+  id: number
+  role: Role
+  password: string
+}
