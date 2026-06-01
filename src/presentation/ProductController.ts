@@ -1,8 +1,8 @@
-import type { CreateProductUseCase } from "../application/produts/CreateProductUseCase.js";
-import type { GetProductByIdUseCase } from "../application/produts/GetProductByIdUseCase.js";
-import type { GetProductUseCase } from "../application/produts/GetProductUseCase.js";
-import type { DeleteProductUseCase } from "../application/produts/DeleteProductUseCase.js";
-import type { UpdateProductByIdUseCase } from "../application/produts/UpdateProductUseCase.js";
+import type { CreateProductUseCase } from "../application/products/CreateProductUseCase.js";
+import type { GetProductByIdUseCase } from "../application/products/GetProductByIdUseCase.js";
+import type { GetProductUseCase } from "../application/products/GetProductUseCase.js";
+import type { DeleteProductUseCase } from "../application/products/DeleteProductUseCase.js";
+import type { UpdateProductByIdUseCase } from "../application/products/UpdateProductUseCase.js";
 import type { Request, Response } from "express";
 
 export class ProductController {

@@ -3,8 +3,8 @@ import { PrismaClient } from "../../../../generated/prisma/client.js";
 import { config } from "../../../config.js";
 
 import type { Product } from "../../../domain/product/Product.js";
-import type { ProductRepository } from "../../application/products/ProductRepository.js";
-import type { CreateProductInput } from "../../../application/produts/ProductRepositoy.js";
+import type { ProductRepository } from "../../../application/products/ProductRepositoy.js";
+import type { CreateProductInput } from "../../../application/products/ProductRepositoy.js";
 
 
 function createPrismaClient(): PrismaClient {
