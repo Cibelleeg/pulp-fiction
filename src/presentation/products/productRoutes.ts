@@ -1,10 +1,10 @@
 import { Router } from "express";
-import { CreateProductUseCase } from "../application/products/CreateProductUseCase.js";
-import { DeleteProductUseCase } from "../application/products/DeleteProductUseCase.js";
-import { GetProductByIdUseCase } from "../application/products/GetProductByIdUseCase.js";
-import { GetProductUseCase } from "../application/products/GetProductUseCase.js";
-import { UpdateProductByIdUseCase } from "../application/products/UpdateProductUseCase.js";
-import { PrismaProductRepository } from "../infra/cinema/products/PrismaProductRepository.js";
+import { CreateProductUseCase } from "../../application/products/CreateProductUseCase.js";
+import { DeleteProductUseCase } from "../../application/products/DeleteProductUseCase.js";
+import { GetProductByIdUseCase } from "../../application/products/GetProductByIdUseCase.js";
+import { GetProductUseCase } from "../../application/products/GetProductUseCase.js";
+import { UpdateProductByIdUseCase } from "../../application/products/UpdateProductUseCase.js";
+import { PrismaProductRepository } from "../../infra/products/PrismaProductRepository.js";
 import { ProductController } from "./ProductController.js";
 
 const produtctRepository = new PrismaProductRepository();

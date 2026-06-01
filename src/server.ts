@@ -3,7 +3,7 @@ import cors from "cors";
 import { cinemaRoutes } from "./presentation/cinema/cinemaRoutes.js";
 import { userRoutes } from "./presentation/user/userRoutes.js";
 import { config } from "./config.js";
-import { productRoutes } from "./presentation/productRoutes.js";
+import { productRoutes } from "./presentation/products/productRoutes.js";
 
 const app = express();
 

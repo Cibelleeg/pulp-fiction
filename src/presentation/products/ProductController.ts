@@ -1,8 +1,8 @@
-import type { CreateProductUseCase } from "../application/products/CreateProductUseCase.js";
-import type { GetProductByIdUseCase } from "../application/products/GetProductByIdUseCase.js";
-import type { GetProductUseCase } from "../application/products/GetProductUseCase.js";
-import type { DeleteProductUseCase } from "../application/products/DeleteProductUseCase.js";
-import type { UpdateProductByIdUseCase } from "../application/products/UpdateProductUseCase.js";
+import type { CreateProductUseCase } from "../../application/products/CreateProductUseCase.js";
+import type { GetProductByIdUseCase } from "../../application/products/GetProductByIdUseCase.js";
+import type { GetProductUseCase } from "../../application/products/GetProductUseCase.js";
+import type { DeleteProductUseCase } from "../../application/products/DeleteProductUseCase.js";
+import type { UpdateProductByIdUseCase } from "../../application/products/UpdateProductUseCase.js";
 import type { Request, Response } from "express";
 
 export class ProductController {
@@ -41,7 +41,32 @@ export class ProductController {
     }
     async createProduct(req: Request, res: Response): Promise<void> {
         try {
-            const productData = req.body;
+            const { name, description, price, stock, category } = req.body as {
+                name?: string;
+                description?: string;
+                price?: number | string;
+                stock?: number | string;
+                category?: string;
+            };
+
+            if (!name || !description || price === undefined || stock === undefined || !category) {
+                res.status(400).json({ error: "Todos os campos name, description, price, stock e category são obrigatórios." });
+                return;
+            }
+
+            const productData = {
+                name,
+                description,
+                price: Number(price),
+                stock: Number(stock),
+                category,
+            };
+
+            if (Number.isNaN(productData.price) || Number.isNaN(productData.stock)) {
+                res.status(400).json({ error: "Os campos price e stock devem ser números válidos." });
+                return;
+            }
+
             const createdProduct = await this.createProductUseCase.execute(productData);
             res.status(201).json(createdProduct);
         } catch (error) {
