@@ -1,6 +1,7 @@
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import type { UserRepository } from "./UserRepository.js";
+import { config } from '../../config.js'
 
 export class LoginUseCase {
     constructor(private userRepository: UserRepository) {}
@@ -16,12 +17,7 @@ export class LoginUseCase {
             throw new Error("Invalid credentials.");
         }
 
-        const secret = process.env.JWT_SECRET;
-        if (!secret) {
-            throw new Error('JWT_SECRET not defined');
-        }
-
-        const token = jwt.sign({ userId: user.id, role: user.role }, secret, { expiresIn: '1d' });
+        const token = jwt.sign({ id: user.id, role: user.role }, config.jwtSecret, { expiresIn: '1d' });
         return token;
     }
 }

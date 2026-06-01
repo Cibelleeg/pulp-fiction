@@ -7,7 +7,10 @@ const prisma = new PrismaClient({ adapter })
 
 import bcrypt from 'bcryptjs'
 
-const hashedPassword = await bcrypt.hash('admin123', 10)
+const adminPassword = process.env.ADMIN_SEED_PASSWORD
+if (!adminPassword) throw new Error('Missing required environment variable: ADMIN_SEED_PASSWORD')
+
+const hashedPassword = await bcrypt.hash(adminPassword, 10)
 
 await prisma.usuario.upsert({
   where: { email: 'admin@cinema.com' },

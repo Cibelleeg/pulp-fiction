@@ -9,4 +9,6 @@ function requireEnv(key: string): string {
 export const config = {
     databaseUrl: requireEnv("DATABASE_URL"),
     port: process.env["PORT"] ?? "3000",
+    jwtSecret: requireEnv("JWT_SECRET"),
+
 };
