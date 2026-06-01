@@ -6,6 +6,7 @@ import { authRoutes } from "./presentation/auth/authRoutes.js"
 import { authenticate } from "./infra/http/middlewares/authenticate.js"
 
 import { config } from "./config.js";
+import { productRoutes } from "./presentation/products/productRoutes.js";
 
 const app = express();
 
