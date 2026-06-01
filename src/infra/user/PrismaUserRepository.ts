@@ -1,6 +1,6 @@
 import { prisma } from "../PrismaClient.js";
 
-import type { User } from "../../domain/user/User.js";
+import type { AuthenticatedUser, User } from "../../domain/user/User.js";
 import type { UserRepository } from "../../application/user/UserRepository.js";
 
 export class PrismaUserRepository implements UserRepository {
@@ -14,7 +14,23 @@ export class PrismaUserRepository implements UserRepository {
             cpf: user.cpf,
             phoneNumber: user.telefone,
             birthDate: user.dataNascimento,
+            role: user.role
         }))
     }
-    
+
+    async findByEmail(email: string): Promise<AuthenticatedUser | null> {
+        const user = await prisma.usuario.findUnique({
+            where: {
+                email
+            }
+        });
+        if (!user) {
+            return null;
+        }
+        return {
+            id: user.idUsuario,
+            password: user.senha,
+            role: user.role
+        };
+    }
 }

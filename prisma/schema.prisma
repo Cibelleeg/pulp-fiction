@@ -16,7 +16,6 @@ datasource db {
 // CINEMA, SALA e ENDEREÇOS
 // ===================================
 
-
 model Cinema {
   idCinema   Int    @id @default(autoincrement()) @map("id_cinema")
   idEndereco Int    @unique @map("id_endereco")
@@ -64,6 +63,11 @@ model Endereco {
 // USUÁRIOS E FUNCIONÁRIOS
 // =======================
 
+enum Role {
+  ADMIN
+  USER
+}
+
 model Usuario {
   idUsuario      Int      @id @default(autoincrement()) @map("id_usuario")
   nome           String
@@ -72,6 +76,7 @@ model Usuario {
   cpf            String   @unique
   telefone       String
   dataNascimento DateTime @map("data_nascimento")
+  role           Role     @default(USER)
 
   funcionario Funcionario?
   ingressos   Ingresso[]
@@ -161,7 +166,7 @@ model Pedido {
   usuario    Usuario      @relation(fields: [idUsuario], references: [idUsuario])
   ingressos  Ingresso[]
   itemPedido ItemPedido[]
-  pagamento  Pagamento? 
+  pagamento  Pagamento?
 
   @@map("pedidos")
 }
@@ -187,12 +192,12 @@ model Sessao {
 // =======================
 
 model Produto {
-  idProduto  Int    @id @default(autoincrement()) @map("id_produto")
-  nome       String
-  descricao  String
-  preco      Float
-  estoque    Int
-  categoria  String
+  idProduto Int    @id @default(autoincrement()) @map("id_produto")
+  nome      String
+  descricao String
+  preco     Float
+  estoque   Int
+  categoria String
 
   itensPedido ItemPedido[]
 
