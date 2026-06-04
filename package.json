@@ -6,12 +6,12 @@
   "main": "index.js",
   "scripts": {
     "dev": "tsx watch src/server.ts",
-    "build": "tsc",
+    "build": "npx tsc",
     "start": "node dist/src/server.js",
     "render-build": "npm run prisma:generate && npm run build",
     "start:render": "npm run render-build && npm start",
     "test": "echo \"No tests yet\" && exit 0",
-    "prisma:generate": "prisma generate",
+    "prisma:generate": "npx prisma generate",
     "prisma:migrate": "prisma migrate dev"
   },
   "prisma": {
