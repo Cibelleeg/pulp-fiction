@@ -1,4 +1,11 @@
-import "dotenv/config";
+import { createRequire } from "node:module";
+
+try {
+    const require = createRequire(import.meta.url);
+    require("dotenv/config");
+} catch {
+    // Ignore missing dotenv when environment variables are provided by the host.
+}
 
 function requireEnv(key: string): string {
     const value = process.env[key];
