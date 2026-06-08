@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { MovieController } from "./movieController.js";
+import { MovieController } from "./MovieController.js";
 import { GetMoviesUseCase } from "../../application/movie/GetMoveisUseCase.js";
 import { GetMovieByIdUseCase } from "../../application/movie/GetMovieByIdUseCase.js";
 import { PrismaMovieRepository } from "../../infra/movie/PrismaMovieRepository.js";

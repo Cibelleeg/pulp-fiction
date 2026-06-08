@@ -135,7 +135,8 @@ Boas praticas para o dia a dia:
 - Prefira commits pequenos e com escopo claro.
 - Revise o `git status` antes de usar `git add`.
 - Rode as validacoes do projeto antes de subir a branch.
-- Use `git push` nas proximas atualizacoes, depois do primeiro `git push -u`.
+- Use `
+git push` nas proximas atualizacoes, depois do primeiro `git push -u`.
 
 ## Observacoes
 
