@@ -7,6 +7,8 @@ import { authenticate } from "./infra/http/middlewares/authenticate.js"
 
 import { config } from "./config.js";
 import { productRoutes } from "./presentation/products/productRoutes.js";
+import { movieRouter } from "./presentation/movie/movieRoutes.js";
+
 
 const app = express();
 
@@ -16,7 +18,8 @@ app.use(express.json());
 app.use("/cinemas", authenticate, cinemaRoutes);
 app.use("/users", userRoutes);
 app.use("/auth", authRoutes);
-app.use("/products", productRoutes);
+app.use("/products", authenticate, productRoutes);
+app.use("/movies", authenticate, movieRouter);
 
 app.listen(config.port, () => {
     console.log(`Server is running on port ${config.port}`);

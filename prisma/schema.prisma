@@ -111,7 +111,7 @@ model Filme {
   idFilme                 Int      @id @default(autoincrement()) @map("id_filme")
   titulo                  String
   sinopse                 String
-  duracao                 DateTime
+  duracao                 Int
   classificacaoIndicativa Int      @map("classificacao_indicativa")
   genero                  String
   dataLancamento          DateTime @map("data_lancamento")
