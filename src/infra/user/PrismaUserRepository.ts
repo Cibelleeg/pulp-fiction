@@ -1,4 +1,5 @@
 import { prisma } from "../PrismaClient.js";
+import type { Prisma } from "../../../generated/prisma/client.js";
 
 import type { AuthenticatedUser, CreateUserInput, UpdateUserInput, User } from "../../domain/user/User.js";
 import type { UserRepository } from "../../application/user/UserRepository.js";
@@ -59,17 +60,14 @@ export class PrismaUserRepository implements UserRepository {
     }
 
     async update(id: number, input: UpdateUserInput): Promise<User> {
+        const data = Object.fromEntries(
+            Object.entries({ nome: input.name, email: input.email, senha: input.password, cpf: input.cpf, telefone: input.phoneNumber, dataNascimento: input.birthDate, role: input.role })
+            .filter(([, v]) => v !== undefined)
+        ) as Prisma.UsuarioUpdateInput;
+
         const user = await prisma.usuario.update({
             where: { idUsuario: id },
-            data: {
-                nome: input.name,
-                email: input.email,
-                senha: input.password,
-                cpf: input.cpf,
-                telefone: input.phoneNumber,
-                dataNascimento: input.birthDate,
-                role: input.role
-            }
+            data
         });
         return {
             id: user.idUsuario,
