@@ -17,21 +17,30 @@ export class MovieController {
     async createMovie(req: Request, res: Response): Promise<void> {
 
         try {
-            const data = req.body;
-            const { title, synopsis, duration, ageRating, genre, releaseDate } = req.body;
+            const { title, synopsis, duration, ageRating, genre, releaseDate, endDate, poster, rating } = req.body;
 
             if (!title || !synopsis || !duration || !ageRating || !genre || !releaseDate) {
                 res.status(400).json({ error: "Campos obrigatórios faltando." });
                 return;
             }
-            const createdMovie = await this.createMovieUseCase.execute(data);
+            const createdMovie = await this.createMovieUseCase.execute({
+                title,
+                synopsis,
+                duration,
+                ageRating,
+                genre,
+                releaseDate,
+                endDate: endDate ? new Date(endDate) : null,
+                poster: poster ?? null,
+                rating: rating ?? null,
+            });
             res.status(201).json(createdMovie);
         } catch (error) {
             res.status(500).json({ error: (error as Error).message });
         }
     }
 
-    async getMovies(req: Request, res: Response): Promise<void> {
+    async getMovies(_req: Request, res: Response): Promise<void> {
         try {
             const movies = await this.getMoviesUseCase.execute();
             res.status(200).json(movies);

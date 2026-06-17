@@ -108,13 +108,16 @@ model Funcionario {
 // =======================
 
 model Filme {
-  idFilme                 Int      @id @default(autoincrement()) @map("id_filme")
+  idFilme                 Int       @id @default(autoincrement()) @map("id_filme")
   titulo                  String
   sinopse                 String
   duracao                 Int
-  classificacaoIndicativa Int      @map("classificacao_indicativa")
+  classificacaoIndicativa Int       @map("classificacao_indicativa")
   genero                  String
-  dataLancamento          DateTime @map("data_lancamento")
+  dataLancamento          DateTime  @map("data_lancamento")
+  dataFimCartaz           DateTime? @map("data_fim_cartaz")
+  poster                  String?
+  nota                    Float?
 
   sessaos   Sessao[]
   avaliacao Avaliacao[]
