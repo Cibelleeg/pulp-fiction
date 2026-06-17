@@ -16,7 +16,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/cinemas", authenticate, cinemaRoutes);
-app.use("/users", authenticate, userRoutes);
+app.use("/users", userRoutes);
 app.use("/auth", authRoutes);
 app.use("/products", authenticate, productRoutes);
 app.use("/movies", authenticate, movieRouter);
