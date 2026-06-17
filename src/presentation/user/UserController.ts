@@ -39,9 +39,19 @@ export class UserController {
     async deleteUser(req: Request, res: Response): Promise<void> {
         try {
             const id = Number(req.params.id);
+
+            if (Number.isNaN(id)) {
+                res.status(400).json({ error: "ID inválido." });
+                return;
+            }
+
             await this.deleteUserUseCase.execute(id);
             res.status(204).send();
         } catch (error) {
+            if (error instanceof Error && error.message === "User not found.") {
+                res.status(404).json({ error: error.message });
+                return;
+            }
             res.status(500).json({ error: "Internal Server Error." });
         }
     }
