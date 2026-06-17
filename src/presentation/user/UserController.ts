@@ -69,10 +69,14 @@ export class UserController {
     async getUserById(req: Request, res: Response): Promise<void> {
         try {
             const id = Number(req.params.id);
-            const user = await this.getUserByIdUseCase.execute(id);
-            if (user) {
-                res.status(200).json(user);
+
+            if (Number.isNaN(id)) {
+                res.status(400).json({ error: "ID inválido." });
+                return;
             }
+
+            const user = await this.getUserByIdUseCase.execute(id);
+            res.status(200).json(user);
         } catch (error) {
             if (error instanceof Error && error.message === "User not found.") {
                 res.status(404).json({ error: error.message });
