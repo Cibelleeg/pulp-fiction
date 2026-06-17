@@ -40,3 +40,5 @@ movieRouter.put("/:id", (req, res) => movieController.updateMovie(req, res));
 
 movieRouter.delete("/:id", (req, res) => movieController.deleteMovie(req, res));
 
+movieRouter.patch("/:id", (req, res) => movieController.updateMovie(req, res));
+
