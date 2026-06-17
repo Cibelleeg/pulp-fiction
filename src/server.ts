@@ -16,6 +16,7 @@ app.use(express.json());
 app.use("/cinemas", authenticate, cinemaRoutes);
 app.use("/users", userRoutes);
 app.use("/auth", authRoutes);
+app.use("/products", productRoutes);
 
 app.listen(config.port, () => {
     console.log(`Server is running on port ${config.port}`);
