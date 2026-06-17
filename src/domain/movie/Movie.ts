@@ -6,4 +6,7 @@ export interface Movie {
     ageRating: number;
     genre: string;
     releaseDate: Date;
+    endDate?: Date | null;
+    poster?: string | null;
+    rating?: number | null;
 }

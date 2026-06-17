@@ -23,6 +23,9 @@ export class PrismaMovieRepository implements MovieRepository {
             ageRating: movie.classificacaoIndicativa,
             genre: movie.genero,
             releaseDate: movie.dataLancamento,
+            endDate: movie.dataFimCartaz,
+            poster: movie.poster,
+            rating: movie.nota,
         }));
     }
 
@@ -41,6 +44,9 @@ export class PrismaMovieRepository implements MovieRepository {
             ageRating: movie.classificacaoIndicativa,
             genre: movie.genero,
             releaseDate: movie.dataLancamento,
+            endDate: movie.dataFimCartaz,
+            poster: movie.poster,
+            rating: movie.nota,
         };
     }
 
@@ -53,6 +59,9 @@ export class PrismaMovieRepository implements MovieRepository {
                 classificacaoIndicativa: data.ageRating,
                 genero: data.genre,
                 dataLancamento: data.releaseDate,
+                dataFimCartaz: data.endDate ?? null,
+                poster: data.poster ?? null,
+                nota: data.rating ?? null,
             },
         });
         return {
@@ -63,6 +72,9 @@ export class PrismaMovieRepository implements MovieRepository {
             ageRating: createdMovie.classificacaoIndicativa,
             genre: createdMovie.genero,
             releaseDate: createdMovie.dataLancamento,
+            endDate: createdMovie.dataFimCartaz,
+            poster: createdMovie.poster,
+            rating: createdMovie.nota,
         };
     }
 
@@ -71,6 +83,7 @@ export class PrismaMovieRepository implements MovieRepository {
             where: { idFilme: id },
         });
     }
+
     async updateById(id: number, data: Omit<Movie, "id">): Promise<Movie> {
         const updatedMovie = await this.prisma.filme.update({
             where: { idFilme: id },
@@ -81,6 +94,9 @@ export class PrismaMovieRepository implements MovieRepository {
                 classificacaoIndicativa: data.ageRating,
                 genero: data.genre,
                 dataLancamento: data.releaseDate,
+                dataFimCartaz: data.endDate ?? null,
+                poster: data.poster ?? null,
+                nota: data.rating ?? null,
             },
         });
         return {
@@ -91,6 +107,9 @@ export class PrismaMovieRepository implements MovieRepository {
             ageRating: updatedMovie.classificacaoIndicativa,
             genre: updatedMovie.genero,
             releaseDate: updatedMovie.dataLancamento,
+            endDate: updatedMovie.dataFimCartaz,
+            poster: updatedMovie.poster,
+            rating: updatedMovie.nota,
         };
     }
 }
