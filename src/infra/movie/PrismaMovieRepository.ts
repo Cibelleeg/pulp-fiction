@@ -10,7 +10,7 @@ function createPrismaClient(): PrismaClient {
     return new PrismaClient({ adapter });
 }
 export class PrismaMovieRepository implements MovieRepository {
-      constructor(private prisma: PrismaClient = createPrismaClient()) { }
+    constructor(private prisma: PrismaClient = createPrismaClient()) { }
 
 
     async findAll(): Promise<Movie[]> {
@@ -19,7 +19,7 @@ export class PrismaMovieRepository implements MovieRepository {
             id: movie.idFilme,
             title: movie.titulo,
             synopsis: movie.sinopse,
-            duration: movie.duracao,
+            duration: Number(movie.duracao),
             ageRating: movie.classificacaoIndicativa,
             genre: movie.genero,
             releaseDate: movie.dataLancamento,
@@ -32,12 +32,12 @@ export class PrismaMovieRepository implements MovieRepository {
         });
 
         if (!movie) return null;
-        
+
         return {
             id: movie.idFilme,
             title: movie.titulo,
             synopsis: movie.sinopse,
-            duration: movie.duracao,
+            duration: Number(movie.duracao),
             ageRating: movie.classificacaoIndicativa,
             genre: movie.genero,
             releaseDate: movie.dataLancamento,
@@ -59,7 +59,7 @@ export class PrismaMovieRepository implements MovieRepository {
             id: createdMovie.idFilme,
             title: createdMovie.titulo,
             synopsis: createdMovie.sinopse,
-            duration: createdMovie.duracao,
+            duration: Number(createdMovie.duracao),
             ageRating: createdMovie.classificacaoIndicativa,
             genre: createdMovie.genero,
             releaseDate: createdMovie.dataLancamento,
@@ -67,11 +67,10 @@ export class PrismaMovieRepository implements MovieRepository {
     }
 
     async deleteById(id: number): Promise<void> {
-         await this.prisma.filme.findUnique({ where: { idFilme: id },
-    
+        await this.prisma.filme.delete({
+            where: { idFilme: id },
         });
     }
-
     async updateById(id: number, data: Omit<Movie, "id">): Promise<Movie> {
         const updatedMovie = await this.prisma.filme.update({
             where: { idFilme: id },
@@ -82,13 +81,13 @@ export class PrismaMovieRepository implements MovieRepository {
                 classificacaoIndicativa: data.ageRating,
                 genero: data.genre,
                 dataLancamento: data.releaseDate,
-            },  
+            },
         });
         return {
             id: updatedMovie.idFilme,
             title: updatedMovie.titulo,
             synopsis: updatedMovie.sinopse,
-            duration: updatedMovie.duracao,
+            duration: Number(updatedMovie.duracao),
             ageRating: updatedMovie.classificacaoIndicativa,
             genre: updatedMovie.genero,
             releaseDate: updatedMovie.dataLancamento,

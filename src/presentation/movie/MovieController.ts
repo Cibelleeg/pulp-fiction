@@ -1,5 +1,5 @@
 import type { CreateMovieUseCase } from "../../application/movie/CreateMovieUseCase.js";
-import type { GetMoviesUseCase } from "../../application/movie/GetMoveisUseCase.js";
+import type { GetMoviesUseCase } from "../../application/movie/GetMoviesUseCase.js";
 import type { GetMovieByIdUseCase } from "../../application/movie/GetMovieByIdUseCase.js";
 import type { UpdateMovieUseCase } from "../../application/movie/UpdateMovieUseCase.js";
 import type { DeleteMovieUseCase } from "../../application/movie/DeleteMovieUseCase.js";
@@ -49,7 +49,7 @@ export class MovieController {
             }
             const movie = await this.getMovieByIdUseCase.execute(id);
             if (!movie) {
-                res.status(404).json({ error: "Movie not found." });
+                res.status(404).json({ error: "Movie not found" });
                 return;
             }
             res.status(200).json(movie);
