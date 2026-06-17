@@ -28,8 +28,22 @@ export class UserController {
 
     async createUser(req: Request, res: Response): Promise<void> {
         try {
-            const { name, email, password, cpf, phoneNumber, birthDate, role } = req.body;
-            const user = await this.createUserUseCase.execute({ name, email, password, cpf, phoneNumber, birthDate: new Date(birthDate), role });
+            const { name, email, password, cpf, phoneNumber, birthDate } = req.body;
+            const parsedBirthDate = new Date(birthDate);
+
+            if (!birthDate || Number.isNaN(parsedBirthDate.getTime())) {
+                res.status(400).json({ error: "Invalid birthDate." });
+                return;
+            }
+
+            const user = await this.createUserUseCase.execute({
+                name,
+                email,
+                password,
+                cpf,
+                phoneNumber,
+                birthDate: parsedBirthDate,
+            });
             res.status(201).json(user);
         } catch (error) {
             res.status(500).json({ error: "Internal Server Error." });
