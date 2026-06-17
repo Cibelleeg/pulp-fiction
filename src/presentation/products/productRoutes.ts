@@ -39,4 +39,6 @@ router.delete("/:id", (req, res) => productController.deleteProductById(req, res
 
 router.put("/:id", (req, res) => productController.updateProductById(req, res));
 
+router.patch("/:id", (req, res) => productController.updateProductById(req, res));
+
 export { router as productRoutes };
