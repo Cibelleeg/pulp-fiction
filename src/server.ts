@@ -19,7 +19,7 @@ app.use("/cinemas", authenticate, cinemaRoutes);
 app.use("/users", userRoutes);
 app.use("/auth", authRoutes);
 app.use("/products", authenticate, productRoutes);
-app.use("/movies", authenticate, movieRouter);
+app.use("/movies", movieRouter);
 
 app.listen(config.port, () => {
     console.log(`Server is running on port ${config.port}`);

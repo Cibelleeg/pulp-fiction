@@ -6,7 +6,8 @@ import { PrismaMovieRepository } from "../../infra/movie/PrismaMovieRepository.j
 import { CreateMovieUseCase } from "../../application/movie/CreateMovieUseCase.js";
 import { UpdateMovieUseCase } from "../../application/movie/UpdateMovieUseCase.js";
 import { DeleteMovieUseCase } from "../../application/movie/DeleteMovieUseCase.js";
-
+import { authenticate } from "../../infra/http/middlewares/authenticate.js";
+import { authorize } from "../../infra/http/middlewares/authorize.js";
 
 const movieRepository = new PrismaMovieRepository();
 
@@ -30,15 +31,15 @@ const movieController = new MovieController(
 
 export const movieRouter = Router();
 
-movieRouter.post("/", (req, res) => movieController.createMovie(req, res));
-
 movieRouter.get("/", (req, res) => movieController.getMovies(req, res));
 
 movieRouter.get("/:id", (req, res) => movieController.getMovieById(req, res));
 
-movieRouter.put("/:id", (req, res) => movieController.updateMovie(req, res));
+movieRouter.post("/", authenticate, authorize('ADMIN'), (req, res) => movieController.createMovie(req, res));
 
-movieRouter.delete("/:id", (req, res) => movieController.deleteMovie(req, res));
+movieRouter.put("/:id", authenticate, authorize('ADMIN'), (req, res) => movieController.updateMovie(req, res));
 
-movieRouter.patch("/:id", (req, res) => movieController.updateMovie(req, res));
+movieRouter.patch("/:id", authenticate, authorize('ADMIN'), (req, res) => movieController.updateMovie(req, res));
+
+movieRouter.delete("/:id", authenticate, authorize('ADMIN'), (req, res) => movieController.deleteMovie(req, res));
 
