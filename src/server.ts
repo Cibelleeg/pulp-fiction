@@ -3,7 +3,6 @@ import cors from "cors";
 import { cinemaRoutes } from "./presentation/cinema/cinemaRoutes.js";
 import { userRoutes } from "./presentation/user/userRoutes.js";
 import { authRoutes } from "./presentation/auth/authRoutes.js"
-import { authenticate } from "./infra/http/middlewares/authenticate.js"
 
 import { config } from "./config.js";
 import { productRoutes } from "./presentation/products/productRoutes.js";
@@ -15,10 +14,10 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.use("/cinemas", authenticate, cinemaRoutes);
+app.use("/cinemas", cinemaRoutes);
 app.use("/users", userRoutes);
 app.use("/auth", authRoutes);
-app.use("/products", authenticate, productRoutes);
+app.use("/products", productRoutes);
 app.use("/movies", movieRouter);
 
 app.listen(config.port, () => {

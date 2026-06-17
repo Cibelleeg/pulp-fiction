@@ -6,6 +6,8 @@ import { GetProductUseCase } from "../../application/products/GetProductUseCase.
 import { UpdateProductByIdUseCase } from "../../application/products/UpdateProductUseCase.js";
 import { PrismaProductRepository } from "../../infra/products/PrismaProductRepository.js";
 import { ProductController } from "./ProductController.js";
+import { authenticate } from "../../infra/http/middlewares/authenticate.js";
+import { authorize } from "../../infra/http/middlewares/authorize.js";
 
 const produtctRepository = new PrismaProductRepository();
 
@@ -33,12 +35,12 @@ router.get("/", (req, res) => productController.getProducts(req, res));
 
 router.get("/:id", (req, res) => productController.getProductById(req, res));   
 
-router.post("/", (req, res) => productController.createProduct(req, res));
+router.post("/", authenticate, authorize('ADMIN'), (req, res) => productController.createProduct(req, res));
 
-router.delete("/:id", (req, res) => productController.deleteProductById(req, res));
+router.delete("/:id", authenticate, authorize('ADMIN'), (req, res) => productController.deleteProductById(req, res));
 
-router.put("/:id", (req, res) => productController.updateProductById(req, res));
+router.put("/:id", authenticate, authorize('ADMIN'), (req, res) => productController.updateProductById(req, res));
 
-router.patch("/:id", (req, res) => productController.updateProductById(req, res));
+router.patch("/:id", authenticate, authorize('ADMIN'), (req, res) => productController.updateProductById(req, res));
 
 export { router as productRoutes };
