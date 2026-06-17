@@ -15,3 +15,17 @@ export interface AuthenticatedUser {
   role: Role
   password: string
 }
+
+export interface CreateUserInput {
+  name: string
+  email: string
+  password: string
+  cpf: string
+  phoneNumber: string
+  birthDate: Date
+  role?: Role
+}
+
+export type UpdateUserInput = Partial<Omit<CreateUserInput, 'password'>> & {
+  password?: string
+}
