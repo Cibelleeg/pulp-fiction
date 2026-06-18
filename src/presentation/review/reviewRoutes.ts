@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { ReviewController } from "./reviewController.js";
+import { ReviewController } from "./ReviewController.js";
 import { ReviewMovieUseCase } from "../../application/review/ReviewMovieUseCase.js";
 import { PrismaReviewRepository } from "../../infra/review/PrismaReviewRepository.js";
 
