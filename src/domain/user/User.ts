@@ -2,11 +2,11 @@ export type Role = 'ADMIN' | 'USER'
 
 export interface User {
   id: number
-  name: string
+  name: string | null
   email: string
-  cpf: string
-  phoneNumber: string
-  birthDate: Date
+  cpf: string | null
+  phoneNumber: string | null
+  birthDate: Date | null
   role: Role
 }
 
@@ -17,12 +17,12 @@ export interface AuthenticatedUser {
 }
 
 export interface CreateUserInput {
-  name: string
+  name?: string
   email: string
   password: string
-  cpf: string
-  phoneNumber: string
-  birthDate: Date
+  cpf?: string
+  phoneNumber?: string
+  birthDate?: Date
   role?: Role
 }
 
@@ -58,4 +58,5 @@ idadeEm(data?: Date): number {
   }
 
   return idade;
+}
 }

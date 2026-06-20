@@ -29,20 +29,23 @@ export class UserController {
     async createUser(req: Request, res: Response): Promise<void> {
         try {
             const { name, email, password, cpf, phoneNumber, birthDate } = req.body;
-            const parsedBirthDate = new Date(birthDate);
 
-            if (!birthDate || Number.isNaN(parsedBirthDate.getTime())) {
-                res.status(400).json({ error: "Invalid birthDate." });
-                return;
+            let parsedBirthDate: Date | undefined;
+            if (birthDate !== undefined) {
+                parsedBirthDate = new Date(birthDate);
+                if (Number.isNaN(parsedBirthDate.getTime())) {
+                    res.status(400).json({ error: "Invalid birthDate." });
+                    return;
+                }
             }
 
             const user = await this.createUserUseCase.execute({
-                name,
                 email,
                 password,
-                cpf,
-                phoneNumber,
-                birthDate: parsedBirthDate,
+                ...(name !== undefined && { name }),
+                ...(cpf !== undefined && { cpf }),
+                ...(phoneNumber !== undefined && { phoneNumber }),
+                ...(parsedBirthDate !== undefined && { birthDate: parsedBirthDate }),
             });
             res.status(201).json(user);
         } catch (error) {
