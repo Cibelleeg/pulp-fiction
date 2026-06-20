@@ -29,3 +29,22 @@ export interface CreateUserInput {
 export type UpdateUserInput = Partial<Omit<CreateUserInput, 'password'>> & {
   password?: string
 }
+
+export class Usuario {
+  constructor(
+    public id: number,
+    public name: string,
+    public email: string,
+    public cpf: string,
+    public phoneNumber: string,
+    public birthDate: Date,
+    public role: Role
+  ) {}
+
+  idadeEm(data?: Date): number {
+    const referencia = data ?? new Date();
+    const diff = referencia.getTime() - this.birthDate.getTime();
+    const idade = new Date(diff);
+    return Math.abs(idade.getUTCFullYear() - 1970);
+  }
+}
