@@ -12,7 +12,7 @@ export class Sessao {
     public basePrice: number
   ) {}
 
-     estaAberta(agora?: Date): boolean {
+  estaAberta(agora?: Date): boolean {
     const referencia = agora ?? new Date();
     return referencia < this.dateTime;
   }
