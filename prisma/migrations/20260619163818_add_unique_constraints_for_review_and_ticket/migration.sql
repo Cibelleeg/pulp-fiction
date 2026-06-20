@@ -6,15 +6,15 @@
 
 */
 -- DropIndex
-DROP INDEX "Avaliacao_id_usuario_key";
+DROP INDEX IF EXISTS "Avaliacao_id_usuario_key";
 
 -- AlterTable
-ALTER TABLE "Filme" ADD COLUMN     "data_fim_cartaz" TIMESTAMP(3),
-ADD COLUMN     "nota" DOUBLE PRECISION,
-ADD COLUMN     "poster" TEXT;
+ALTER TABLE "Filme" ADD COLUMN IF NOT EXISTS "data_fim_cartaz" TIMESTAMP(3),
+ADD COLUMN IF NOT EXISTS "nota" DOUBLE PRECISION,
+ADD COLUMN IF NOT EXISTS "poster" TEXT;
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Avaliacao_id_usuario_id_filme_key" ON "Avaliacao"("id_usuario", "id_filme");
+CREATE UNIQUE INDEX IF NOT EXISTS "Avaliacao_id_usuario_id_filme_key" ON "Avaliacao"("id_usuario", "id_filme");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "ingressos_id_sessao_id_assento_key" ON "ingressos"("id_sessao", "id_assento");
+CREATE UNIQUE INDEX IF NOT EXISTS "ingressos_id_sessao_id_assento_key" ON "ingressos"("id_sessao", "id_assento");
