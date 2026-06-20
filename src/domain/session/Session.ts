@@ -22,7 +22,7 @@ export class Sessao {
   }
 
   podeVenderMeia(): boolean {
-    const meiaVendidas = this.totalSeats - this.availableSeats;
+    const vendidos = this.totalSeats - this.availableSeats;
     const limite = Math.floor(this.totalSeats * 0.4);
     return meiaVendidas < limite;
   }
