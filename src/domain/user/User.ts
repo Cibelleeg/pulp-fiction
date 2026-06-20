@@ -41,10 +41,21 @@ export class Usuario {
     public role: Role
   ) {}
 
-  idadeEm(data?: Date): number {
-    const referencia = data ?? new Date();
-    const diff = referencia.getTime() - this.birthDate.getTime();
-    const idade = new Date(diff);
-    return Math.abs(idade.getUTCFullYear() - 1970);
+idadeEm(data?: Date): number {
+  const referencia = data ?? new Date();
+
+  let idade = referencia.getFullYear() - this.birthDate.getFullYear();
+
+  const aindaNaoFezAniversario =
+    referencia.getMonth() < this.birthDate.getMonth() ||
+    (
+      referencia.getMonth() === this.birthDate.getMonth() &&
+      referencia.getDate() < this.birthDate.getDate()
+    );
+
+  if (aindaNaoFezAniversario) {
+    idade--;
   }
+
+  return idade;
 }
