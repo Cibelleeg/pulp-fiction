@@ -24,7 +24,7 @@ export class Sessao {
   podeVenderMeia(): boolean {
     const vendidos = this.totalSeats - this.availableSeats;
     const limite = Math.floor(this.totalSeats * 0.4);
-    return meiaVendidas < limite;
+    return vendidos < limite;
   }
 
   calcularPreco(tipo: TypeIngresso): number {
