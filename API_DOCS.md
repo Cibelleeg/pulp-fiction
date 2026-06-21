@@ -123,6 +123,49 @@ Faz login e retorna o token JWT.
 
 ---
 
+### Sessões `/sessions`
+
+| Método | Rota | Auth | Role |
+|--------|------|------|------|
+| `GET` | `/sessions` | Não | — |
+| `GET` | `/sessions/:id` | Não | — |
+| `POST` | `/sessions` | Sim | ADMIN |
+| `PUT` | `/sessions/:id` | Sim | ADMIN |
+| `PATCH` | `/sessions/:id` | Sim | ADMIN |
+| `DELETE` | `/sessions/:id` | Sim | ADMIN |
+
+**POST `/sessions` — criar sessão:**
+```json
+{
+  "movieId": 1,
+  "roomId": 1,
+  "dateTime": "2026-06-22T19:30:00.000Z",
+  "language": "Dublado",
+  "format": "2D",
+  "basePrice": 35
+}
+```
+
+**Resposta:**
+```json
+{
+  "id": 1,
+  "movieId": 1,
+  "roomId": 1,
+  "cinemaId": 1,
+  "dateTime": "2026-06-22T19:30:00.000Z",
+  "language": "Dublado",
+  "format": "2D",
+  "basePrice": 35,
+  "roomName": "Sala 1",
+  "roomType": "Convencional",
+  "totalSeats": 120,
+  "availableSeats": 120
+}
+```
+
+---
+
 ### Produtos `/products` — todas as rotas requerem autenticação
 
 | Método | Rota | Descrição |
