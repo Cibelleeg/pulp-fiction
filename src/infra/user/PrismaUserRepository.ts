@@ -35,6 +35,26 @@ export class PrismaUserRepository implements UserRepository {
         };
     }
 
+    async findByCpf(cpf: string): Promise<User | null> {
+        const user = await prisma.usuario.findUnique({
+            where: {
+                cpf
+            }
+        });
+        if (!user) {
+            return null;
+        }
+        return {
+            id: user.idUsuario,
+            name: user.nome,
+            email: user.email,
+            cpf: user.cpf,
+            phoneNumber: user.telefone,
+            birthDate: user.dataNascimento,
+            role: user.role
+        };
+    }
+
     async findById(id: number): Promise<User | null> {
         const user = await prisma.usuario.findUnique({
             where: {

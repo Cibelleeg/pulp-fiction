@@ -20,7 +20,7 @@ export class MovieController {
             const { title, synopsis, duration, ageRating, genre, releaseDate, endDate, poster, rating } = req.body;
 
             if (!title || !synopsis || !duration || !ageRating || !genre || !releaseDate) {
-                res.status(400).json({ error: "Campos obrigatórios faltando." });
+                res.status(400).json({ error: "Missing required fields." });
                 return;
             }
             const createdMovie = await this.createMovieUseCase.execute({
@@ -53,12 +53,12 @@ export class MovieController {
         try {
             const id = Number(req.params.id);
             if (isNaN(id)) {
-                res.status(400).json({ error: "ID inválido." });
+                res.status(400).json({ error: "Invalid ID." });
                 return;
             }
             const movie = await this.getMovieByIdUseCase.execute(id);
             if (!movie) {
-                res.status(404).json({ error: "Movie not found" });
+                res.status(404).json({ error: "Movie not found." });
                 return;
             }
             res.status(200).json(movie);
@@ -72,14 +72,14 @@ export class MovieController {
             const id = Number(req.params.id);
             const data = req.body;
             if (isNaN(id)) {
-                res.status(400).json({ error: "ID inválido." });
+                res.status(400).json({ error: "Invalid ID." });
                 return;
             }
             const updatedMovie = await this.updateMovieUseCase.execute(id, data);
             res.status(200).json(updatedMovie);
         } catch (error) {
-            if (error instanceof Error && error.message === "Movie not found.") {
-                res.status(404).json({ error: "Movie not found." });
+            if (error instanceof Error) {
+                res.status(400).json({ error: error.message });
                 return;
             }
             res.status(500).json({ error: "Internal Server Error." });
@@ -90,14 +90,14 @@ export class MovieController {
         try {
             const id = Number(req.params.id);
             if (isNaN(id)) {
-                res.status(400).json({ error: "ID inválido." });
+                res.status(400).json({ error: "Invalid ID." });
                 return;
             }
             await this.deleteMovieUseCase.execute(id);
-            res.status(204).send();
+            res.status(204).json({message: "Movie deleted successfully."});
         } catch (error) {
-            if (error instanceof Error && error.message === "Movie not found.") {
-                res.status(404).json({ error: "Movie not found." });
+            if (error instanceof Error) {
+                res.status(400).json({ error: error.message });
                 return;
             }
             res.status(500).json({ error: "Internal Server Error." });
