@@ -22,6 +22,7 @@ const userController = new UserController(getUserUseCase, getUserByIdUseCase, cr
 const router = Router();
 
 router.get("/", authenticate, authorize('ADMIN'), (req, res) => userController.getAllUsers(req, res));
+router.get("/me", authenticate, (req, res) => userController.getMe(req, res));
 router.get("/:id", authenticate, authorize('ADMIN'), (req, res) => userController.getUserById(req, res));
 router.post("/", (req, res) => userController.createUser(req, res));
 router.patch("/:id", authenticate, (req, res) => userController.updateUser(req, res));

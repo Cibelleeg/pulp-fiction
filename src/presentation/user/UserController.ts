@@ -147,6 +147,19 @@ export class UserController {
         }
     }
 
+    async getMe(req: Request, res: Response): Promise<void> {
+        try {
+            const user = await this.getUserByIdUseCase.execute(req.user!.id);
+            if (!user) {
+                res.status(404).json({ error: "User not found." });
+                return;
+            }
+            res.status(200).json(user);
+        } catch (error) {
+            res.status(500).json({ error: "Internal Server Error." });
+        }
+    }
+
     async getUserById(req: Request, res: Response): Promise<void> {
         try {
             const id = Number(req.params.id);
