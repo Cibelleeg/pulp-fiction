@@ -6,10 +6,15 @@ export class Sessao {
     public id: number,
     public movieId: number,
     public roomId: number,
+    public cinemaId: number,
     public dateTime: Date,
+    public language: string,
+    public format: string,
+    public basePrice: number,
+    public roomName: string,
+    public roomType: string,
     public totalSeats: number,
-    public availableSeats: number,
-    public basePrice: number
+    public availableSeats: number
   ) {}
 
   estaAberta(agora?: Date): boolean {
