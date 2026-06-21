@@ -37,21 +37,23 @@ export class UserController {
                 res.status(400).json({ error: "Invalid email format." });
                 return;
             }
-
-            const parsedBirthDate = new Date(birthDate);
-
-            if (!birthDate || Number.isNaN(parsedBirthDate.getTime())) {
-                res.status(400).json({ error: "Invalid birthDate." });
-                return;
+            
+            let parsedBirthDate: Date | undefined;
+            if (birthDate !== undefined) {
+                parsedBirthDate = new Date(birthDate);
+                if (Number.isNaN(parsedBirthDate.getTime())) {
+                    res.status(400).json({ error: "Invalid birthDate." });
+                    return;
+                }
             }
 
             const user = await this.createUserUseCase.execute({
-                name,
                 email,
                 password,
-                cpf,
-                phoneNumber,
-                birthDate: parsedBirthDate,
+                ...(name !== undefined && { name }),
+                ...(cpf !== undefined && { cpf }),
+                ...(phoneNumber !== undefined && { phoneNumber }),
+                ...(parsedBirthDate !== undefined && { birthDate: parsedBirthDate }),
             });
             res.status(201).json(user);
         } catch (error) {
