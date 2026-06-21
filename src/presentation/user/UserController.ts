@@ -140,18 +140,8 @@ export class UserController {
             res.status(200).json({ message: "User updated successfully.", user });
         } catch (error) {
             if (error instanceof Error) {
-                if (error.message === "User not found.") {
-                    res.status(404).json({ error: error.message });
-                    return;
-                }
-                if (error.message === "Email already in use.") {
-                    res.status(400).json({ error: error.message });
-                    return;
-                }
-                if (error.message === "CPF already in use.") {
-                    res.status(400).json({ error: error.message });
-                    return;
-                }
+                res.status(400).json({ error: error.message });
+                return;
             }
             res.status(500).json({ error: "Internal Server Error." });
         }
