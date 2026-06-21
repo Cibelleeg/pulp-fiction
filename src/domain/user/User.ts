@@ -14,6 +14,8 @@ export interface AuthenticatedUser {
   id: number
   role: Role
   password: string
+  name: string | null
+  email: string
 }
 
 export interface CreateUserInput {
