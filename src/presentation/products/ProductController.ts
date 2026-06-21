@@ -26,7 +26,7 @@ export class ProductController {
         try {
             const id = Number(req.params.id);
             if (isNaN(id)) {
-                res.status(400).json({ error: "ID inválido." });
+                res.status(400).json({ error: "Invalid ID." });
                 return;
             }
             const product = await this.getProductByIdUseCase.execute(id);
@@ -49,27 +49,48 @@ export class ProductController {
                 category?: string;
             };
 
-            if (!name || !description || price === undefined || stock === undefined || !category) {
-                res.status(400).json({ error: "Todos os campos name, description, price, stock e category são obrigatórios." });
-                return;
+            if (
+                name === undefined || description === undefined || price === undefined || stock === undefined || category === undefined
+            ) {
+                throw new Error("All fields are required.");
             }
 
             const productData = {
-                name,
-                description,
+                name: name.trim(),
+                description: description.trim(),
                 price: Number(price),
                 stock: Number(stock),
-                category,
+                category: category.trim(),
             };
 
-            if (Number.isNaN(productData.price) || Number.isNaN(productData.stock)) {
-                res.status(400).json({ error: "Os campos price e stock devem ser números válidos." });
-                return;
+            if (Number.isNaN(productData.price)) {
+                throw new Error("Price must be a valid number.");
+            }
+
+            if (Number.isNaN(productData.stock)) {
+                throw new Error("Stock must be a valid number.");
+            }
+
+            if (productData.price < 0) {
+                throw new Error("Price cannot be negative.");
+            }
+
+            if (productData.stock < 0) {
+                throw new Error("Stock cannot be negative.");
             }
 
             const createdProduct = await this.createProductUseCase.execute(productData);
-            res.status(201).json(createdProduct);
+
+            res.status(201).json({ message: "Product created successfully.", product: createdProduct });
+
         } catch (error) {
+
+            if (error instanceof Error) {
+                
+                res.status(400).json({ error: error.message });
+                return;
+            }
+
             res.status(500).json({ error: "Internal Server Error." });
         }
     }
@@ -77,14 +98,14 @@ export class ProductController {
         try {
             const id = Number(req.params.id);
             if (isNaN(id)) {
-                res.status(400).json({ error: "ID inválido." });
+                res.status(400).json({ error: "Invalid ID." });
                 return;
             }
             await this.deleteProductByIdUseCase.execute(id);
-            res.status(204).send();
+            res.status(204).json({message: "Product deleted successfully."});
         } catch (error) {
-            if (error instanceof Error && error.message === "Product not found.") {
-                res.status(404).json({ error: "Product not found." });
+            if (error instanceof Error) {
+                res.status(400).json({ error: error.message });
                 return;
             }
             res.status(500).json({ error: "Internal Server Error." });
@@ -94,7 +115,7 @@ export class ProductController {
         try {
             const id = Number(req.params.id);
             if (isNaN(id)) {
-                res.status(400).json({ error: "ID inválido." });
+                res.status(400).json({ error: "Invalid ID." });
                 return;
             }
             const data = req.body;
@@ -105,8 +126,8 @@ export class ProductController {
             }
             res.status(200).json(updatedProduct);
         } catch (error) {
-            if (error instanceof Error && error.message === "Product not found.") {
-                res.status(404).json({ error: "Product not found." });
+            if (error instanceof Error) {
+                res.status(400).json({ error: error.message });
                 return;
             }
             res.status(500).json({ error: "Internal Server Error." });

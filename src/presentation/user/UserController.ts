@@ -29,6 +29,15 @@ export class UserController {
     async createUser(req: Request, res: Response): Promise<void> {
         try {
             const { name, email, password, cpf, phoneNumber, birthDate } = req.body;
+
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+            if (!emailRegex.test(email)) {
+
+                res.status(400).json({ error: "Invalid email format." });
+                return;
+            }
+
             const parsedBirthDate = new Date(birthDate);
 
             if (!birthDate || Number.isNaN(parsedBirthDate.getTime())) {
@@ -46,6 +55,23 @@ export class UserController {
             });
             res.status(201).json(user);
         } catch (error) {
+
+            if (error instanceof Error) {
+
+                if (error.message.includes("`cpf`")) {
+                    res.status(409).json({ error: "CPF already exists." });
+                    return;
+                }
+
+                if (error.message.includes("`email`")) {
+                    res.status(409).json({ error: "Email already exists." });
+                    return;
+                }
+
+                res.status(500).json({ error: error.message });
+                return;
+            }
+
             res.status(500).json({ error: "Internal Server Error." });
         }
     }
@@ -55,12 +81,12 @@ export class UserController {
             const id = Number(req.params.id);
 
             if (Number.isNaN(id)) {
-                res.status(400).json({ error: "ID inválido." });
+                res.status(400).json({ error: "Invalid ID." });
                 return;
             }
 
             await this.deleteUserUseCase.execute(id);
-            res.status(204).send();
+            res.status(204).json({message: "User deleted successfully."});
         } catch (error) {
             if (error instanceof Error && error.message === "User not found.") {
                 res.status(404).json({ error: error.message });
@@ -75,7 +101,7 @@ export class UserController {
             const id = Number(req.params.id);
 
             if (Number.isNaN(id)) {
-                res.status(400).json({ error: "ID inválido." });
+                res.status(400).json({ error: "Invalid ID." });
                 return;
             }
 
@@ -87,6 +113,13 @@ export class UserController {
 
             const { role, birthDate, ...rest } = req.body ?? {};
             const data: any = { ...rest };
+
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+            if (!emailRegex.test(data.email)) {
+                res.status(400).json({ error: "Invalid email format." });
+                return;
+            }
 
             if (birthDate !== undefined) {
                 const parsedBirthDate = new Date(birthDate as string);
@@ -102,11 +135,21 @@ export class UserController {
             }
 
             const user = await this.updateUserUseCase.execute(id, data);
-            res.status(200).json(user);
+            res.status(200).json({ message: "User updated successfully.", user });
         } catch (error) {
-            if (error instanceof Error && error.message === "User not found.") {
-                res.status(404).json({ error: error.message });
-                return;
+            if (error instanceof Error) {
+                if (error.message === "User not found.") {
+                    res.status(404).json({ error: error.message });
+                    return;
+                }
+                if (error.message === "Email already in use.") {
+                    res.status(400).json({ error: error.message });
+                    return;
+                }
+                if (error.message === "CPF already in use.") {
+                    res.status(400).json({ error: error.message });
+                    return;
+                }
             }
             res.status(500).json({ error: "Internal Server Error." });
         }
@@ -117,7 +160,7 @@ export class UserController {
             const id = Number(req.params.id);
 
             if (Number.isNaN(id)) {
-                res.status(400).json({ error: "ID inválido." });
+                res.status(400).json({ error: "Invalid ID." });
                 return;
             }
 

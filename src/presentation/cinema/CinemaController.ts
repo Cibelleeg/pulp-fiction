@@ -30,17 +30,16 @@ export class CinemaController {
             const id = Number(req.params.id);
 
             if (isNaN(id)) {
-                res.status(400).json({ error: "ID inválido." });
+                res.status(400).json({ error: "Invalid ID." });
                 return;
             }
 
             const cinema = await this.useCaseById.executeById(id);
 
             if (!cinema) {
-                res.status(404).json({ error: "Cinema não encontrado." });
+                res.status(404).json({ error: "Cinema not found." });
                 return;
             }
-
             res.status(200).json(cinema);
         } catch (error) {
             res.status(500).json({ error: "Internal Server Error." });
@@ -54,6 +53,16 @@ export class CinemaController {
             const createdCinema = await this.createCinemaUseCase.execute(cinemaData);
             res.status(201).json(createdCinema);
         } catch (error) {
+            if (error instanceof Error) {
+
+                if (error.message.includes("`cnpj`")) {
+                    res.status(409).json({ error: "CNPJ already exists." });
+                    return;
+                }
+
+                res.status(500).json({ error: error.message });
+                return;
+            }
             res.status(500).json({ error: "Internal Server Error." });
         }
     }
@@ -61,14 +70,14 @@ export class CinemaController {
         try {
             const id = Number(req.params.id);
             if (isNaN(id)) {
-                res.status(400).json({ error: "ID inválido." });
+                res.status(400).json({ error: "Invalid ID." });
                 return;
             }
             await this.deleteCinemaByIdUseCase.executeDeleteById(id);
-            res.status(204).send();
+            res.status(204).json({message: "Cinema deleted successfully."});
         } catch (error) {
-            if (error instanceof Error && error.message === "Cinema not found.") {
-                res.status(404).json({ error: "Cinema not found." });
+            if (error instanceof Error) {
+                res.status(400).json({ error: error.message });
                 return;
             }
             res.status(500).json({ error: "Internal Server Error." });
@@ -78,15 +87,15 @@ export class CinemaController {
         try {
             const id = Number(req.params.id);
             if (isNaN(id)) {
-                res.status(400).json({ error: "ID inválido." });
+                res.status(400).json({ error: "Invalid ID." });
                 return;
             }
             const cinemaData = req.body;
             const updatedCinema = await this.updateCinemaByIdUseCase.executeUpdateById(id, cinemaData);
             res.status(200).json(updatedCinema);
         } catch (error) {
-            if (error instanceof Error && error.message === "Cinema not found.") {
-                res.status(404).json({ error: "Cinema not found." });
+            if (error instanceof Error) {
+                res.status(400).json({ error: error.message });
                 return;
             }
             res.status(500).json({ error: "Internal Server Error." });
