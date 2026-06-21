@@ -118,7 +118,7 @@ export class UserController {
 
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-            if (!emailRegex.test(data.email)) {
+            if (data.email !== undefined && !emailRegex.test(data.email)) {
                 res.status(400).json({ error: "Invalid email format." });
                 return;
             }
