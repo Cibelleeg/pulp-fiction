@@ -41,16 +41,17 @@ export class ProductController {
     }
     async createProduct(req: Request, res: Response): Promise<void> {
         try {
-            const { name, description, price, stock, category } = req.body as {
+            const { name, description, price, stock, category, poster } = req.body as {
                 name?: string;
                 description?: string;
                 price?: number | string;
                 stock?: number | string;
                 category?: string;
+                poster?: string;
             };
 
             if (
-                name === undefined || description === undefined || price === undefined || stock === undefined || category === undefined
+                name === undefined || description === undefined || price === undefined || stock === undefined || category === undefined || poster === undefined
             ) {
                 throw new Error("All fields are required.");
             }
@@ -61,6 +62,7 @@ export class ProductController {
                 price: Number(price),
                 stock: Number(stock),
                 category: category.trim(),
+                poster: poster.trim(),
             };
 
             if (Number.isNaN(productData.price)) {
