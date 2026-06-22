@@ -163,7 +163,7 @@ model Assento {
 model Pedido {
   idPedido   Int      @id @default(autoincrement()) @map("id_pedido")
   idUsuario  Int      @map("id_usuario")
-  total      Int
+  total      Float
   status     String
   dataPedido DateTime @map("data_pedido")
 
@@ -205,20 +205,51 @@ model Produto {
   poster  String?
 
   itensPedido ItemPedido[]
+  itemCombos  ItemCombo[]
 
   @@map("produtos")
+}
+
+model Combo {
+  idCombo   Int    @id @default(autoincrement()) @map("id_combo")
+  nome      String
+  descricao String
+  preco     Float
+  ativo     Boolean @default(true)
+
+  itens       ItemCombo[]
+  itensPedido ItemPedido[]
+
+  @@map("combos")
+}
+
+model ItemCombo {
+  idItemCombo Int @id @default(autoincrement()) @map("id_item_combo")
+  idCombo     Int @map("id_combo")
+  idProduto   Int @map("id_produto")
+  quantidade  Int
+
+  combo   Combo   @relation(fields: [idCombo], references: [idCombo])
+  produto Produto @relation(fields: [idProduto], references: [idProduto])
+
+  @@unique([idCombo, idProduto])
+  @@map("item_combos")
 }
 
 model ItemPedido {
   idItemPedido  Int   @id @default(autoincrement()) @map("id_item_pedido")
   idPedido      Int   @map("id_pedido")
-  idProduto     Int   @map("id_produto")
+  idProduto     Int?  @map("id_produto")
+  idCombo       Int?  @map("id_combo")
   quantidade    Int
-  precoUnitario Float
-  Subtotal      Float
+  precoUnitario Float @map("preco_unitario")
+  subtotal      Float
 
-  pedido  Pedido  @relation(fields: [idPedido], references: [idPedido])
-  produto Produto @relation(fields: [idProduto], references: [idProduto])
+  pedido  Pedido   @relation(fields: [idPedido], references: [idPedido])
+  produto Produto? @relation(fields: [idProduto], references: [idProduto])
+  combo   Combo?   @relation(fields: [idCombo], references: [idCombo])
+
+  @@map("item_pedidos")
 }
 
 model Pagamento {
