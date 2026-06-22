@@ -1,7 +1,7 @@
 -- AlterTable
-ALTER TABLE "Filme" ADD COLUMN IF NOT EXISTS "data_fim_cartaz" TIMESTAMP(3),
-ADD COLUMN IF NOT EXISTS "nota" DOUBLE PRECISION,
-ADD COLUMN IF NOT EXISTS "poster" TEXT;
+ALTER TABLE "Filme" ADD COLUMN     "data_fim_cartaz" TIMESTAMP(3),
+ADD COLUMN     "nota" DOUBLE PRECISION,
+ADD COLUMN     "poster" TEXT;
 
 -- AlterTable
 ALTER TABLE "usuarios" ALTER COLUMN "nome" DROP NOT NULL,
