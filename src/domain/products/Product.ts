@@ -6,4 +6,6 @@ export interface Product {
   stock: number;
   category: string;
   poster: string | null;
+  tamanhos: string[];
+  sabores: string[];
 }

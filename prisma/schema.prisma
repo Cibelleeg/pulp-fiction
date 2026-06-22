@@ -202,7 +202,9 @@ model Produto {
   preco     Float
   estoque   Int
   categoria String
-  poster  String?
+  poster    String?
+  tamanhos  String[] @default([])
+  sabores   String[] @default([])
 
   itensPedido ItemPedido[]
   itemCombos  ItemCombo[]

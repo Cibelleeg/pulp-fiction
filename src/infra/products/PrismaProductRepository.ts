@@ -25,6 +25,8 @@ export class PrismaProductRepository implements ProductRepository {
             stock: product.estoque,
             category: product.categoria,
             poster: product.poster,
+            tamanhos: product.tamanhos,
+            sabores: product.sabores,
         }))
     }
 
@@ -44,29 +46,35 @@ export class PrismaProductRepository implements ProductRepository {
             stock: product.estoque,
             category: product.categoria,
             poster: product.poster,
+            tamanhos: product.tamanhos,
+            sabores: product.sabores,
         };
     }
 
     async create(data: CreateProductInput): Promise<Product> {
         const createdProduct = await this.prisma.produto.create({
-            data: {     
+            data: {
                 nome: data.name,
                 descricao: data.description,
                 preco: data.price,
                 estoque: data.stock,
                 categoria: data.category,
                 poster: data.poster,
+                tamanhos: data.tamanhos,
+                sabores: data.sabores,
             },
         });
 
         return {
             id: createdProduct.idProduto,
-            name: createdProduct.nome,  
+            name: createdProduct.nome,
             description: createdProduct.descricao,
             price: createdProduct.preco,
             stock: createdProduct.estoque,
             category: createdProduct.categoria,
             poster: createdProduct.poster,
+            tamanhos: createdProduct.tamanhos,
+            sabores: createdProduct.sabores,
         };
     }
 
@@ -84,6 +92,8 @@ export class PrismaProductRepository implements ProductRepository {
                 estoque: data.stock,
                 categoria: data.category,
                 poster: data.poster,
+                tamanhos: data.tamanhos,
+                sabores: data.sabores,
             },
         });
         return {
@@ -94,6 +104,8 @@ export class PrismaProductRepository implements ProductRepository {
             stock: updatedProduct.estoque,
             category: updatedProduct.categoria,
             poster: updatedProduct.poster,
+            tamanhos: updatedProduct.tamanhos,
+            sabores: updatedProduct.sabores,
         };
     }
 

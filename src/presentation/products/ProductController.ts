@@ -41,13 +41,15 @@ export class ProductController {
     }
     async createProduct(req: Request, res: Response): Promise<void> {
         try {
-            const { name, description, price, stock, category, poster } = req.body as {
+            const { name, description, price, stock, category, poster, tamanhos, sabores } = req.body as {
                 name?: string;
                 description?: string;
                 price?: number | string;
                 stock?: number | string;
                 category?: string;
                 poster?: string;
+                tamanhos?: string[];
+                sabores?: string[];
             };
 
             if (
@@ -62,7 +64,9 @@ export class ProductController {
                 price: Number(price),
                 stock: Number(stock),
                 category: category.trim(),
-                poster: poster.trim(),
+                poster: poster?.trim() ?? null,
+                tamanhos: tamanhos ?? [],
+                sabores: sabores ?? [],
             };
 
             if (Number.isNaN(productData.price)) {
