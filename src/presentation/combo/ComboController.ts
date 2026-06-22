@@ -44,11 +44,12 @@ export class ComboController {
 
   async createCombo(req: Request, res: Response): Promise<void> {
     try {
-      const { nome, descricao, preco, ativo, itens } = req.body as {
+      const { nome, descricao, preco, ativo, poster, itens } = req.body as {
         nome?: string;
         descricao?: string;
         preco?: number;
         ativo?: boolean;
+        poster?: string | null;
         itens?: Array<{ idProduto: number; quantidade: number }>;
       };
 
@@ -72,6 +73,7 @@ export class ComboController {
         descricao,
         preco: Number(preco),
         ativo: ativo ?? true,
+        poster: poster ?? null,
         itens: itens.map((item) => ({
           idProduto: Number(item.idProduto),
           quantidade: Number(item.quantidade),
@@ -95,17 +97,19 @@ export class ComboController {
         return;
       }
 
-      const { nome, descricao, preco, ativo } = req.body as {
+      const { nome, descricao, preco, ativo, poster } = req.body as {
         nome?: string;
         descricao?: string;
         preco?: number;
         ativo?: boolean;
+        poster?: string | null;
       };
 
       const data: UpdateComboInput = {};
       if (nome !== undefined) data.nome = nome;
       if (descricao !== undefined) data.descricao = descricao;
       if (ativo !== undefined) data.ativo = ativo;
+      if (poster !== undefined) data.poster = poster;
       if (preco !== undefined) {
         if (!Number.isFinite(Number(preco)) || Number(preco) < 0) {
           res.status(400).json({ error: "Invalid price." });

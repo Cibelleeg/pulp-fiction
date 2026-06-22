@@ -5,6 +5,7 @@ export type CreateComboInput = {
   descricao: string;
   preco: number;
   ativo?: boolean;
+  poster?: string | null;
   itens: Array<{ idProduto: number; quantidade: number }>;
 };
 
@@ -13,6 +14,7 @@ export type UpdateComboInput = {
   descricao?: string;
   preco?: number;
   ativo?: boolean;
+  poster?: string | null;
 };
 
 export interface ComboRepository {

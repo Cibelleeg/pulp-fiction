@@ -12,7 +12,8 @@
     "start:render": "npm run render-build && npm start",
     "test": "echo \"No tests yet\" && exit 0",
     "prisma:generate": "npx prisma generate",
-    "prisma:migrate": "prisma migrate dev"
+    "prisma:migrate": "prisma migrate dev",
+    "seed:combos": "tsx prisma/seed-combos.ts"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"

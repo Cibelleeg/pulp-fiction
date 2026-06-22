@@ -11,5 +11,6 @@ export interface Combo {
   descricao: string;
   preco: number;
   ativo: boolean;
+  poster: string | null;
   itens?: ItemCombo[];
 }

@@ -17,6 +17,7 @@ function mapCombo(raw: any): Combo {
     descricao: raw.descricao,
     preco: raw.preco,
     ativo: raw.ativo,
+    poster: raw.poster,
     itens: raw.itens?.map((i: any) => ({
       idItemCombo: i.idItemCombo,
       idCombo: i.idCombo,
@@ -50,6 +51,7 @@ export class PrismaComboRepository implements ComboRepository {
         descricao: data.descricao,
         preco: data.preco,
         ativo: data.ativo ?? true,
+        poster: data.poster ?? null,
         itens: {
           create: data.itens.map((item) => ({
             idProduto: item.idProduto,
@@ -73,6 +75,7 @@ export class PrismaComboRepository implements ComboRepository {
     if (data.descricao !== undefined) updateData.descricao = data.descricao;
     if (data.preco !== undefined) updateData.preco = data.preco;
     if (data.ativo !== undefined) updateData.ativo = data.ativo;
+    if (data.poster !== undefined) updateData.poster = data.poster;
 
     const updated = await this.prisma.combo.update({
       where: { idCombo: id },
