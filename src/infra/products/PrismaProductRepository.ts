@@ -24,6 +24,7 @@ export class PrismaProductRepository implements ProductRepository {
             price: product.preco,
             stock: product.estoque,
             category: product.categoria,
+            poster: product.poster,
         }))
     }
 
@@ -42,6 +43,7 @@ export class PrismaProductRepository implements ProductRepository {
             price: product.preco,
             stock: product.estoque,
             category: product.categoria,
+            poster: product.poster,
         };
     }
 
@@ -53,6 +55,7 @@ export class PrismaProductRepository implements ProductRepository {
                 preco: data.price,
                 estoque: data.stock,
                 categoria: data.category,
+                poster: data.poster,
             },
         });
 
@@ -63,6 +66,7 @@ export class PrismaProductRepository implements ProductRepository {
             price: createdProduct.preco,
             stock: createdProduct.estoque,
             category: createdProduct.categoria,
+            poster: createdProduct.poster,
         };
     }
 
@@ -79,6 +83,7 @@ export class PrismaProductRepository implements ProductRepository {
                 preco: data.price,
                 estoque: data.stock,
                 categoria: data.category,
+                poster: data.poster,
             },
         });
         return {
@@ -88,6 +93,7 @@ export class PrismaProductRepository implements ProductRepository {
             price: updatedProduct.preco,
             stock: updatedProduct.estoque,
             category: updatedProduct.categoria,
+            poster: updatedProduct.poster,
         };
     }
 
