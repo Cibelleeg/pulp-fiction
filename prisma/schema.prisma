@@ -163,7 +163,7 @@ model Assento {
 model Pedido {
   idPedido   Int      @id @default(autoincrement()) @map("id_pedido")
   idUsuario  Int      @map("id_usuario")
-  total      Int
+  total      Float
   status     String
   dataPedido DateTime @map("data_pedido")
 

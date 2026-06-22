@@ -28,12 +28,27 @@ export class PedidoController {
         return;
       }
 
+      if (!Number.isInteger(Number(idUsuario)) || Number(idUsuario) <= 0) {
+        res.status(400).json({ error: "Invalid user ID." });
+        return;
+      }
+
+      if (req.user?.role !== "ADMIN" && Number(idUsuario) !== req.user?.id) {
+        res.status(403).json({ error: "Forbidden." });
+        return;
+      }
+
+      if (itens.some((i) => !Number.isInteger(Number(i.quantidade)) || Number(i.quantidade) <= 0)) {
+        res.status(400).json({ error: "Invalid item quantity." });
+        return;
+      }
+
       const pedido = await this.criarPedidoUseCase.execute({
         idUsuario: Number(idUsuario),
         itens: itens.map((i) => ({
-          idProduto: i.idProduto ?? null,
-          idCombo: i.idCombo ?? null,
-          quantidade: i.quantidade,
+          idProduto: i.idProduto != null ? Number(i.idProduto) : null,
+          idCombo: i.idCombo != null ? Number(i.idCombo) : null,
+          quantidade: Number(i.quantidade),
           precoUnitario: i.precoUnitario ?? 0,
         })),
       });
@@ -67,10 +82,25 @@ export class PedidoController {
         precoUnitario?: number;
       };
 
+      if (!Number.isInteger(Number(quantidade)) || Number(quantidade) <= 0) {
+        res.status(400).json({ error: "Invalid item quantity." });
+        return;
+      }
+
+      const pedido = await this.getPedidoByIdUseCase.execute(idPedido);
+      if (!pedido) {
+        res.status(404).json({ error: "Pedido not found." });
+        return;
+      }
+      if (req.user?.role !== "ADMIN" && pedido.idUsuario !== req.user?.id) {
+        res.status(403).json({ error: "Forbidden." });
+        return;
+      }
+
       const item = await this.adicionarItemUseCase.execute(idPedido, {
-        idProduto: idProduto ?? null,
-        idCombo: idCombo ?? null,
-        quantidade,
+        idProduto: idProduto != null ? Number(idProduto) : null,
+        idCombo: idCombo != null ? Number(idCombo) : null,
+        quantidade: Number(quantidade),
         precoUnitario: precoUnitario ?? 0,
       });
 
@@ -100,6 +130,10 @@ export class PedidoController {
         res.status(404).json({ error: "Pedido not found." });
         return;
       }
+      if (req.user?.role !== "ADMIN" && pedido.idUsuario !== req.user?.id) {
+        res.status(403).json({ error: "Forbidden." });
+        return;
+      }
       res.status(200).json(pedido);
     } catch (error) {
       res.status(500).json({ error: "Internal Server Error." });
@@ -111,6 +145,10 @@ export class PedidoController {
       const idUsuario = Number(req.params.idUsuario);
       if (isNaN(idUsuario)) {
         res.status(400).json({ error: "Invalid ID." });
+        return;
+      }
+      if (req.user?.role !== "ADMIN" && idUsuario !== req.user?.id) {
+        res.status(403).json({ error: "Forbidden." });
         return;
       }
       const pedidos = await this.getPedidosByUsuarioUseCase.execute(idUsuario);
@@ -125,6 +163,16 @@ export class PedidoController {
       const id = Number(req.params.id);
       if (isNaN(id)) {
         res.status(400).json({ error: "Invalid ID." });
+        return;
+      }
+
+      const existingPedido = await this.getPedidoByIdUseCase.execute(id);
+      if (!existingPedido) {
+        res.status(404).json({ error: "Pedido not found." });
+        return;
+      }
+      if (req.user?.role !== "ADMIN" && existingPedido.idUsuario !== req.user?.id) {
+        res.status(403).json({ error: "Forbidden." });
         return;
       }
 

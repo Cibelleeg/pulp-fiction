@@ -3,7 +3,7 @@ import { PrismaClient } from "../../../generated/prisma/client.js";
 import { config } from "../../config.js";
 
 import type { Combo } from "../../domain/combo/Combo.js";
-import type { ComboRepository, CreateComboInput } from "../../application/combo/ComboRepository.js";
+import type { ComboRepository, CreateComboInput, UpdateComboInput } from "../../application/combo/ComboRepository.js";
 
 function createPrismaClient(): PrismaClient {
   const adapter = new PrismaPg({ connectionString: config.databaseUrl });
@@ -67,15 +67,16 @@ export class PrismaComboRepository implements ComboRepository {
     await this.prisma.combo.delete({ where: { idCombo: id } });
   }
 
-  async updateById(id: number, data: Partial<Omit<CreateComboInput, "itens">>): Promise<Combo> {
+  async updateById(id: number, data: UpdateComboInput): Promise<Combo> {
+    const updateData: Record<string, unknown> = {};
+    if (data.nome !== undefined) updateData.nome = data.nome;
+    if (data.descricao !== undefined) updateData.descricao = data.descricao;
+    if (data.preco !== undefined) updateData.preco = data.preco;
+    if (data.ativo !== undefined) updateData.ativo = data.ativo;
+
     const updated = await this.prisma.combo.update({
       where: { idCombo: id },
-      data: {
-        nome: data.nome,
-        descricao: data.descricao,
-        preco: data.preco,
-        ativo: data.ativo,
-      },
+      data: updateData,
       include: { itens: true },
     });
     return mapCombo(updated);

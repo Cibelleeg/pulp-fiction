@@ -28,7 +28,7 @@ export const pedidoRoutes = Router();
 
 pedidoRoutes.post("/", authenticate, (req, res) => controller.criarPedido(req, res));
 pedidoRoutes.post("/:id/itens", authenticate, (req, res) => controller.adicionarItem(req, res));
-pedidoRoutes.get("/:id", authenticate, (req, res) => controller.getPedidoById(req, res));
 pedidoRoutes.get("/usuario/:idUsuario", authenticate, (req, res) => controller.getPedidosByUsuario(req, res));
+pedidoRoutes.get("/:id", authenticate, (req, res) => controller.getPedidoById(req, res));
 pedidoRoutes.patch("/:id/cancelar", authenticate, (req, res) => controller.cancelarPedido(req, res));
 pedidoRoutes.delete("/:id", authenticate, authorize("ADMIN"), (req, res) => controller.deletePedido(req, res));

@@ -4,6 +4,7 @@ import type { GetCombosUseCase } from "../../application/combo/GetComboUseCase.j
 import type { GetComboByIdUseCase } from "../../application/combo/GetComboByIdUseCase.js";
 import type { DeleteComboUseCase } from "../../application/combo/DeleteComboUseCase.js";
 import type { UpdateComboUseCase } from "../../application/combo/UpdateComboUseCase.js";
+import type { UpdateComboInput } from "../../application/combo/ComboRepository.js";
 
 export class ComboController {
   constructor(
@@ -56,12 +57,25 @@ export class ComboController {
         return;
       }
 
+      if (!Number.isFinite(Number(preco)) || Number(preco) < 0) {
+        res.status(400).json({ error: "Invalid price." });
+        return;
+      }
+
+      if (itens.some((item) => !Number.isInteger(Number(item.idProduto)) || !Number.isInteger(Number(item.quantidade)) || Number(item.quantidade) <= 0)) {
+        res.status(400).json({ error: "Invalid combo items." });
+        return;
+      }
+
       const combo = await this.createComboUseCase.execute({
         nome,
         descricao,
         preco: Number(preco),
         ativo: ativo ?? true,
-        itens,
+        itens: itens.map((item) => ({
+          idProduto: Number(item.idProduto),
+          quantidade: Number(item.quantidade),
+        })),
       });
       res.status(201).json(combo);
     } catch (error) {
@@ -88,12 +102,19 @@ export class ComboController {
         ativo?: boolean;
       };
 
-      const combo = await this.updateComboUseCase.execute(id, {
-        nome,
-        descricao,
-        preco: preco !== undefined ? Number(preco) : undefined,
-        ativo,
-      });
+      const data: UpdateComboInput = {};
+      if (nome !== undefined) data.nome = nome;
+      if (descricao !== undefined) data.descricao = descricao;
+      if (ativo !== undefined) data.ativo = ativo;
+      if (preco !== undefined) {
+        if (!Number.isFinite(Number(preco)) || Number(preco) < 0) {
+          res.status(400).json({ error: "Invalid price." });
+          return;
+        }
+        data.preco = Number(preco);
+      }
+
+      const combo = await this.updateComboUseCase.execute(id, data);
 
       res.status(200).json(combo);
     } catch (error) {

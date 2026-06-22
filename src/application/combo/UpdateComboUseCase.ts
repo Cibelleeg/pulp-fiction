@@ -10,11 +10,6 @@ export class UpdateComboUseCase {
       throw new Error("Combo not found.");
     }
 
-    return this.comboRepository.updateById(id, {
-      nome: data.nome,
-      descricao: data.descricao,
-      preco: data.preco,
-      ativo: data.ativo,
-    });
+    return this.comboRepository.updateById(id, data);
   }
 }

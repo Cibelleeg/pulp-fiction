@@ -20,5 +20,5 @@ export interface ComboRepository {
   findById(id: number): Promise<Combo | null>;
   create(data: CreateComboInput): Promise<Combo>;
   deleteById(id: number): Promise<void>;
-  updateById(id: number, data: Partial<Omit<CreateComboInput, "itens">>): Promise<Combo>;
+  updateById(id: number, data: UpdateComboInput): Promise<Combo>;
 }
