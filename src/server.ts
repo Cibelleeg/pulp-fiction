@@ -6,10 +6,10 @@ import { authRoutes } from "./presentation/auth/authRoutes.js"
 
 import { config } from "./config.js";
 import { productRoutes } from "./presentation/products/productRoutes.js";
-import { movieRouter } from "./presentation/movie/movieRoutes.js";
 import { sessionRoutes } from "./presentation/session/sessionRoutes.js";
 import { comboRoutes } from "./presentation/combo/comboRoutes.js";
 import { pedidoRoutes } from "./presentation/pedido/pedidoRoutes.js";
+import { catalogRoutes, reviewRoutes } from "./presentation/catalog/catalogRoutes.js";
 
 
 const app = express();
@@ -21,7 +21,8 @@ app.use("/cinemas", cinemaRoutes);
 app.use("/users", userRoutes);
 app.use("/auth", authRoutes);
 app.use("/products", productRoutes);
-app.use("/movies", movieRouter);
+app.use("/filmes", catalogRoutes);
+app.use("/avaliacoes", reviewRoutes);
 app.use("/sessions", sessionRoutes);
 app.use("/combos", comboRoutes);
 app.use("/pedidos", pedidoRoutes);

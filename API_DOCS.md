@@ -98,26 +98,26 @@ Faz login e retorna o token JWT.
 
 ---
 
-### Filmes `/movies` — todas as rotas requerem autenticação
+### Filmes `/filmes`
 
-| Método | Rota | Descrição |
-|--------|------|-----------|
-| `POST` | `/movies` | Criar filme |
-| `GET` | `/movies` | Listar todos |
-| `GET` | `/movies/:id` | Buscar por ID |
-| `PUT` | `/movies/:id` | Atualizar completo |
-| `PATCH` | `/movies/:id` | Atualizar parcial |
-| `DELETE` | `/movies/:id` | Deletar |
+| Método | Rota | Auth | Descrição |
+|--------|------|------|-----------|
+| `GET` | `/filmes` | Não | Catálogo ranqueado |
+| `GET` | `/filmes/:id` | Opcional | Detalhe com distribuição e elegibilidade |
+| `GET` | `/filmes/:id/avaliacoes` | Não | Avaliações paginadas |
+| `POST` | `/filmes/:id/avaliacoes` | Sim | Criar avaliação elegível |
+| `PATCH` | `/avaliacoes/:id` | Sim | Editar própria avaliação |
+| `DELETE` | `/avaliacoes/:id` | Sim | Excluir própria avaliação |
 
-**POST `/movies` — todos os campos são obrigatórios:**
+**GET `/filmes` — query params opcionais:**
+
+`ordenar=nota|recentes|avaliados`, `genero`, `ano`, `estado=cartaz|breve|encerrado`, `page`, `pageSize`.
+
+**POST `/filmes/:id/avaliacoes`:**
 ```json
 {
-  "title": "Pulp Fiction",
-  "synopsis": "Histórias entrelaçadas...",
-  "duration": 154,
-  "ageRating": 18,
-  "genre": "Crime",
-  "releaseDate": "1994-10-14"
+  "nota": 5,
+  "comentario": "Excelente sessão."
 }
 ```
 
