@@ -5,6 +5,7 @@ import { FilmeCatalogo } from "../../domain/catalog/CatalogMovie.js";
 import { EstatisticaAvaliacoes, distribuicaoVazia } from "../../domain/catalog/ReviewStats.js";
 
 import type {
+  CatalogMovieInput,
   CatalogRepository,
   ReviewListItem,
   StoredReview,
@@ -184,18 +185,17 @@ export class PrismaCatalogRepository implements CatalogRepository {
     await this.prisma.avaliacao.delete({ where: { idAvaliacao } });
   }
 
-  async createMovies(data: Omit<FilmeCatalogo, "id">): Promise<FilmeCatalogo> {
-    const { ano, ...rest } = data as Omit<FilmeCatalogo, "id"> & { ano?: number };
+  async createMovies(data: CatalogMovieInput): Promise<FilmeCatalogo> {
     const created = await this.prisma.filme.create({
       data: {
-        titulo: rest.titulo,
-        sinopse: rest.sinopse,
-        duracao: rest.duracao,
-        classificacaoIndicativa: rest.classificacao,
-        genero: rest.genero,
-        dataLancamento: rest.dataLancamento,
-        dataFimCartaz: rest.dataFimCartaz,
-        poster: rest.posterUrl,
+        titulo: data.titulo,
+        sinopse: data.sinopse,
+        duracao: data.duracao,
+        classificacaoIndicativa: data.classificacao,
+        genero: data.genero,
+        dataLancamento: data.dataLancamento,
+        dataFimCartaz: data.dataFimCartaz,
+        poster: data.posterUrl,
       },
     });
 
@@ -206,19 +206,18 @@ export class PrismaCatalogRepository implements CatalogRepository {
     await this.prisma.filme.delete({ where: { idFilme: id } });
   }
 
-  async updateMovieById(id: number, data: Omit<FilmeCatalogo, "id">): Promise<FilmeCatalogo> {
-    const { ano, ...rest } = data as Omit<FilmeCatalogo, "id"> & { ano?: number };
+  async updateMovieById(id: number, data: CatalogMovieInput): Promise<FilmeCatalogo> {
     const updated = await this.prisma.filme.update({
       where: { idFilme: id },
       data: {
-        titulo: rest.titulo,
-        sinopse: rest.sinopse,
-        duracao: rest.duracao,
-        classificacaoIndicativa: rest.classificacao,
-        genero: rest.genero,
-        dataLancamento: rest.dataLancamento,
-        dataFimCartaz: rest.dataFimCartaz,
-        poster: rest.posterUrl,
+        titulo: data.titulo,
+        sinopse: data.sinopse,
+        duracao: data.duracao,
+        classificacaoIndicativa: data.classificacao,
+        genero: data.genero,
+        dataLancamento: data.dataLancamento,
+        dataFimCartaz: data.dataFimCartaz,
+        poster: data.posterUrl,
       },
     });
 

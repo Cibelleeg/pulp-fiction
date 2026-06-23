@@ -207,7 +207,7 @@ export class CatalogController {
 
   async createMovie(req: Request, res: Response): Promise<void> {
     try {
-      const { title, synopsis, duration, ageRating, genre, year, releaseDate, endDate, posterUrl, stats } = req.body;
+      const { title, synopsis, duration, ageRating, genre, year, releaseDate, endDate, posterUrl } = req.body;
 
       if (!title || !synopsis || !duration || !ageRating || !genre || !year || !releaseDate) {
         res.status(400).json({ error: "Campos obrigatórios faltando." });
@@ -230,7 +230,6 @@ export class CatalogController {
         posterUrl: posterUrl ?? null,
         dataLancamento: new Date(releaseDate),
         dataFimCartaz: endDate ? new Date(endDate) : null,
-        stats,
       });
 
       res.status(201).json(createdMovie);
