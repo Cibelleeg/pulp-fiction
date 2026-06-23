@@ -8,6 +8,9 @@ import type { ListMovieReviewsUseCase } from "../../application/catalog/ListMovi
 import { ReviewForbiddenError, ReviewNotFoundError } from "../../application/catalog/UpdateReviewUseCase.js";
 import type { UpdateReviewUseCase } from "../../application/catalog/UpdateReviewUseCase.js";
 import { NotaInvalidaError } from "../../domain/catalog/Review.js";
+import type { DeleteMovieUseCase } from "../../application/catalog/DeleteMovieUseCase.js";
+import type { CreateMovieUseCase } from "../../application/catalog/CreateMovieUseCase.js";
+import type { UpdateMovieUseCase } from "../../application/catalog/UpdateMovieUseCase.js";
 
 export class CatalogController {
   constructor(
@@ -17,6 +20,9 @@ export class CatalogController {
     private createMovieReviewUseCase: CreateMovieReviewUseCase,
     private updateReviewUseCase: UpdateReviewUseCase,
     private deleteReviewUseCase: DeleteReviewUseCase,
+    private createMovieUseCase: CreateMovieUseCase,
+    private updateMovieUseCase: UpdateMovieUseCase,
+    private deleteMovieUseCase: DeleteMovieUseCase,
   ) {}
 
   async listMovies(req: Request, res: Response): Promise<void> {
@@ -60,7 +66,7 @@ export class CatalogController {
       const result = await this.listCatalogMoviesUseCase.execute(params);
 
       res.status(200).json(result);
-    } catch (error) {
+    } catch {
       res.status(500).json({ error: "Internal Server Error." });
     }
   }
@@ -68,7 +74,7 @@ export class CatalogController {
   async getMovieDetail(req: Request, res: Response): Promise<void> {
     try {
       const idFilme = Number(req.params.id);
-      if (!Number.isInteger(idFilme)) {
+      if (!Number.isInteger(idFilme) || idFilme <= 0) {
         res.status(400).json({ error: "Invalid ID." });
         return;
       }
@@ -88,7 +94,7 @@ export class CatalogController {
   async listMovieReviews(req: Request, res: Response): Promise<void> {
     try {
       const idFilme = Number(req.params.id);
-      if (!Number.isInteger(idFilme)) {
+      if (!Number.isInteger(idFilme) || idFilme <= 0) {
         res.status(400).json({ error: "Invalid ID." });
         return;
       }
@@ -106,8 +112,12 @@ export class CatalogController {
   async createMovieReview(req: Request, res: Response): Promise<void> {
     try {
       const idFilme = Number(req.params.id);
-      if (!Number.isInteger(idFilme) || !req.user) {
-        res.status(400).json({ error: "Invalid request." });
+      if (!Number.isInteger(idFilme) || idFilme <= 0) {
+        res.status(400).json({ error: "Invalid ID." });
+        return;
+      }
+      if (!req.user) {
+        res.status(401).json({ error: "Unauthorized." });
         return;
       }
 
@@ -127,8 +137,12 @@ export class CatalogController {
   async updateReview(req: Request, res: Response): Promise<void> {
     try {
       const idAvaliacao = Number(req.params.id);
-      if (!Number.isInteger(idAvaliacao) || !req.user) {
-        res.status(400).json({ error: "Invalid request." });
+      if (!Number.isInteger(idAvaliacao) || idAvaliacao <= 0) {
+        res.status(400).json({ error: "Invalid ID." });
+        return;
+      }
+      if (!req.user) {
+        res.status(401).json({ error: "Unauthorized." });
         return;
       }
 
@@ -146,8 +160,12 @@ export class CatalogController {
   async deleteReview(req: Request, res: Response): Promise<void> {
     try {
       const idAvaliacao = Number(req.params.id);
-      if (!Number.isInteger(idAvaliacao) || !req.user) {
-        res.status(400).json({ error: "Invalid request." });
+      if (!Number.isInteger(idAvaliacao) || idAvaliacao <= 0) {
+        res.status(400).json({ error: "Invalid ID." });
+        return;
+      }
+      if (!req.user) {
+        res.status(401).json({ error: "Unauthorized." });
         return;
       }
 
@@ -184,11 +202,76 @@ export class CatalogController {
       res.status(404).json({ error: error.message });
       return;
     }
-    if (error instanceof Error) {
-      res.status(400).json({ error: error.message });
-      return;
-    }
-
     res.status(500).json({ error: "Internal Server Error." });
+  }
+
+  async createMovie(req: Request, res: Response): Promise<void> {
+    try {
+      const { title, synopsis, duration, ageRating, genre, year, releaseDate, endDate, posterUrl, stats } = req.body;
+
+      if (!title || !synopsis || !duration || !ageRating || !genre || !year || !releaseDate) {
+        res.status(400).json({ error: "Campos obrigatórios faltando." });
+        return;
+      }
+
+      const durationNum = Number(duration);
+      if (!Number.isInteger(durationNum) || durationNum <= 0) {
+        res.status(400).json({ error: "Duração inválida." });
+        return;
+      }
+
+      const createdMovie = await this.createMovieUseCase.execute({
+        titulo: title,
+        ano: Number(year),
+        duracao: durationNum,
+        classificacao: Number(ageRating),
+        genero: genre,
+        sinopse: synopsis,
+        posterUrl: posterUrl ?? null,
+        dataLancamento: new Date(releaseDate),
+        dataFimCartaz: endDate ? new Date(endDate) : null,
+        stats,
+      });
+
+      res.status(201).json(createdMovie);
+    } catch {
+      res.status(500).json({ error: "Internal Server Error." });
+    }
+  }
+
+  async updateMovie(req: Request, res: Response): Promise<void> {
+    try {
+      const id = Number(req.params.id);
+      if (!Number.isInteger(id) || id <= 0) {
+        res.status(400).json({ error: "ID inválido." });
+        return;
+      }
+      const updatedMovie = await this.updateMovieUseCase.execute(id, req.body);
+      res.status(200).json(updatedMovie);
+    } catch (error) {
+      if (error instanceof Error && error.message === "Movie not found.") {
+        res.status(404).json({ error: "Movie not found." });
+        return;
+      }
+      res.status(500).json({ error: "Internal Server Error." });
+    }
+  }
+
+  async deleteMovie(req: Request, res: Response): Promise<void> {
+    try {
+      const id = Number(req.params.id);
+      if (!Number.isInteger(id) || id <= 0) {
+        res.status(400).json({ error: "ID inválido." });
+        return;
+      }
+      await this.deleteMovieUseCase.execute(id);
+      res.status(204).send();
+    } catch (error) {
+      if (error instanceof Error && error.message === "Movie not found.") {
+        res.status(404).json({ error: "Movie not found." });
+        return;
+      }
+      res.status(500).json({ error: "Internal Server Error." });
+    }
   }
 }

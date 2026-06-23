@@ -85,4 +85,8 @@ export interface CatalogRepository {
   createReview(data: { idUsuario: number; idFilme: number; nota: number; comentario: string | null }): Promise<StoredReview>;
   updateReview(idAvaliacao: number, data: { nota: number; comentario: string | null }): Promise<StoredReview>;
   deleteReview(idAvaliacao: number): Promise<void>;
+  
+  createMovies(data: Omit<FilmeCatalogo, "id">): Promise<FilmeCatalogo>;
+  deleteMovieById(id: number): Promise<void>;
+  updateMovieById(id: number, data: Omit<FilmeCatalogo, "id">): Promise<FilmeCatalogo>;
 }

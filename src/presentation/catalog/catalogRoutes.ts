@@ -10,6 +10,9 @@ import { authenticate } from "../../infra/http/middlewares/authenticate.js";
 import { optionalAuthenticate } from "../../infra/http/middlewares/optionalAuthenticate.js";
 import { PrismaCatalogRepository } from "../../infra/catalog/PrismaCatalogRepository.js";
 import { CatalogController } from "./CatalogController.js";
+import { DeleteMovieUseCase } from "../../application/catalog/DeleteMovieUseCase.js";
+import { UpdateMovieUseCase } from "../../application/catalog/UpdateMovieUseCase.js";
+import { CreateMovieUseCase } from "../../application/catalog/CreateMovieUseCase.js";
 
 const catalogRepository = new PrismaCatalogRepository();
 const minimoAvaliacoesRanking = config.minimoAvaliacoesRanking;
@@ -21,15 +24,23 @@ const controller = new CatalogController(
   new CreateMovieReviewUseCase(catalogRepository),
   new UpdateReviewUseCase(catalogRepository),
   new DeleteReviewUseCase(catalogRepository),
+  new CreateMovieUseCase(catalogRepository),
+  new UpdateMovieUseCase(catalogRepository),
+  new DeleteMovieUseCase(catalogRepository),
 );
 
 export const catalogRoutes = Router();
 export const reviewRoutes = Router();
 
 catalogRoutes.get("/", (req, res) => controller.listMovies(req, res));
+catalogRoutes.post("/", authenticate, (req, res) => controller.createMovie(req, res));
 catalogRoutes.get("/:id", optionalAuthenticate, (req, res) => controller.getMovieDetail(req, res));
 catalogRoutes.get("/:id/avaliacoes", (req, res) => controller.listMovieReviews(req, res));
 catalogRoutes.post("/:id/avaliacoes", authenticate, (req, res) => controller.createMovieReview(req, res));
 
 reviewRoutes.patch("/:id", authenticate, (req, res) => controller.updateReview(req, res));
 reviewRoutes.delete("/:id", authenticate, (req, res) => controller.deleteReview(req, res));
+
+catalogRoutes.patch("/:id", authenticate, (req, res) => controller.updateMovie(req, res));
+catalogRoutes.delete("/:id", authenticate, (req, res) => controller.deleteMovie(req, res));
+
