@@ -285,6 +285,59 @@ export class PrismaPedidoRepository implements PedidoRepository {
     return mapPedido(updated);
   }
 
+  async cancelWithRestock(idPedido: number): Promise<Pedido> {
+    return await this.prisma.$transaction(async (tx) => {
+      const pedido = await tx.pedido.findUnique({
+        where: { idPedido },
+        include: {
+          itemPedido: true,
+          ingressos: true,
+        },
+      });
+
+      if (!pedido) throw new Error("Pedido not found.");
+      if (pedido.status === "CANCELADO") throw new Error("The order has already been cancelled.");
+
+      const produtoRestock = new Map<number, number>();
+      for (const item of pedido.itemPedido ?? []) {
+        if (item.idProduto != null) {
+          produtoRestock.set(item.idProduto, (produtoRestock.get(item.idProduto) ?? 0) + item.quantidade);
+        }
+
+        if (item.idCombo != null) {
+          const itensCombo = await tx.itemCombo.findMany({ where: { idCombo: item.idCombo } });
+          for (const itemCombo of itensCombo) {
+            const quantidade = itemCombo.quantidade * item.quantidade;
+            produtoRestock.set(itemCombo.idProduto, (produtoRestock.get(itemCombo.idProduto) ?? 0) + quantidade);
+          }
+        }
+      }
+
+      for (const [idProduto, quantidade] of produtoRestock) {
+        await tx.produto.update({
+          where: { idProduto },
+          data: { estoque: { increment: quantidade } },
+        });
+      }
+
+      await tx.ingresso.updateMany({
+        where: {
+          idPedido,
+          status: { not: "CANCELADO" },
+        },
+        data: { status: "CANCELADO" },
+      });
+
+      const updated = await tx.pedido.update({
+        where: { idPedido },
+        data: { status: "CANCELADO" },
+        include: pedidoInclude,
+      });
+
+      return mapPedido(updated);
+    });
+  }
+
   async delete(idPedido: number): Promise<void> {
     await this.prisma.itemPedido.deleteMany({ where: { idPedido } });
     await this.prisma.pedido.delete({ where: { idPedido } });

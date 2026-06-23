@@ -10,7 +10,7 @@
     "start": "npx prisma migrate deploy && node dist/src/server.js",
     "render-build": "npm run prisma:generate && npm run build",
     "start:render": "npm run render-build && npm start",
-    "test": "echo \"No tests yet\" && exit 0",
+    "test": "tsx --test \"src/**/*.test.ts\"",
     "prisma:generate": "npx prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "seed:combos": "tsx prisma/seed-combos.ts"

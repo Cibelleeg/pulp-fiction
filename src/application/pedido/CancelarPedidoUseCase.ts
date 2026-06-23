@@ -14,6 +14,6 @@ export class CancelarPedidoUseCase {
       throw new Error("The order has already been cancelled.");
     }
 
-    return this.pedidoRepository.updateStatus(id, "CANCELADO");
+    return this.pedidoRepository.cancelWithRestock(id);
   }
 }

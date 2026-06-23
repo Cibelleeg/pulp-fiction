@@ -54,5 +54,6 @@ export interface PedidoRepository {
     totalIncrement: number
   ): Promise<ItemPedido>;
   updateStatus(idPedido: number, status: string): Promise<Pedido>;
+  cancelWithRestock(idPedido: number): Promise<Pedido>;
   delete(idPedido: number): Promise<void>;
 }
