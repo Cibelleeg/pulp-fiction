@@ -15,6 +15,18 @@ export type CatalogListParams = CatalogFilters & {
   pageSize: number;
 };
 
+export type CatalogMovieInput = {
+  titulo: string;
+  ano: number;
+  duracao: number;
+  classificacao: number;
+  genero: string;
+  sinopse: string;
+  posterUrl: string | null;
+  dataLancamento: Date;
+  dataFimCartaz: Date | null;
+};
+
 export type CatalogMovieListItem = {
   id: number;
   rank: number;
@@ -85,4 +97,8 @@ export interface CatalogRepository {
   createReview(data: { idUsuario: number; idFilme: number; nota: number; comentario: string | null }): Promise<StoredReview>;
   updateReview(idAvaliacao: number, data: { nota: number; comentario: string | null }): Promise<StoredReview>;
   deleteReview(idAvaliacao: number): Promise<void>;
+  
+  createMovies(data: CatalogMovieInput): Promise<FilmeCatalogo>;
+  deleteMovieById(id: number): Promise<void>;
+  updateMovieById(id: number, data: CatalogMovieInput): Promise<FilmeCatalogo>;
 }

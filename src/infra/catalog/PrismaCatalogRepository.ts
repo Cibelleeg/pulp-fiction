@@ -5,6 +5,7 @@ import { FilmeCatalogo } from "../../domain/catalog/CatalogMovie.js";
 import { EstatisticaAvaliacoes, distribuicaoVazia } from "../../domain/catalog/ReviewStats.js";
 
 import type {
+  CatalogMovieInput,
   CatalogRepository,
   ReviewListItem,
   StoredReview,
@@ -182,6 +183,46 @@ export class PrismaCatalogRepository implements CatalogRepository {
 
   async deleteReview(idAvaliacao: number): Promise<void> {
     await this.prisma.avaliacao.delete({ where: { idAvaliacao } });
+  }
+
+  async createMovies(data: CatalogMovieInput): Promise<FilmeCatalogo> {
+    const created = await this.prisma.filme.create({
+      data: {
+        titulo: data.titulo,
+        sinopse: data.sinopse,
+        duracao: data.duracao,
+        classificacaoIndicativa: data.classificacao,
+        genero: data.genero,
+        dataLancamento: data.dataLancamento,
+        dataFimCartaz: data.dataFimCartaz,
+        poster: data.posterUrl,
+      },
+    });
+
+    return this.toDomain(created, distribuicaoVazia());
+  }
+
+  async deleteMovieById(id: number): Promise<void> {
+    await this.prisma.filme.delete({ where: { idFilme: id } });
+  }
+
+  async updateMovieById(id: number, data: CatalogMovieInput): Promise<FilmeCatalogo> {
+    const updated = await this.prisma.filme.update({
+      where: { idFilme: id },
+      data: {
+        titulo: data.titulo,
+        sinopse: data.sinopse,
+        duracao: data.duracao,
+        classificacaoIndicativa: data.classificacao,
+        genero: data.genero,
+        dataLancamento: data.dataLancamento,
+        dataFimCartaz: data.dataFimCartaz,
+        poster: data.posterUrl,
+      },
+    });
+
+    const stats = await this.getStatsByMovie(id);
+    return this.toDomain(updated, stats.get(id) ?? distribuicaoVazia());
   }
 
   private async getStatsByMovie(idFilme?: number): Promise<Map<number, DistribuicaoAvaliacoes>> {
