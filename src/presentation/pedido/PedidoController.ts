@@ -23,7 +23,7 @@ export class PedidoController {
         itens?: Array<{ idProduto?: number | null; idCombo?: number | null; quantidade: number; precoUnitario?: number }>;
       };
 
-      if (!idUsuario || !itens || itens.length === 0) {
+      if (!idUsuario || !itens) {
         res.status(400).json({ error: "Missing required fields." });
         return;
       }
