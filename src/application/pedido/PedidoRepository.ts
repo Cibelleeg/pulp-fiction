@@ -1,4 +1,6 @@
 import type { Pedido, ItemPedido } from "../../domain/pedido/Pedido.js";
+import type { StatusIngresso } from "../../domain/ingresso/Ingresso.js";
+import type { TypeIngresso } from "../../domain/ticketType/TicketType.js";
 
 export type CreateItemPedidoInput = {
   idProduto: number | null;
@@ -18,6 +20,16 @@ export type StockUpdate = {
   quantidade: number;
 };
 
+export type CreatePedidoIngressoInput = {
+  idSessao: number;
+  idUsuario: number;
+  idAssento: number;
+  tipo: TypeIngresso;
+  preco: number;
+  status: StatusIngresso;
+  dataEmissao: Date;
+};
+
 export interface PedidoRepository {
   findById(id: number): Promise<Pedido | null>;
   findByUsuario(idUsuario: number): Promise<Pedido[]>;
@@ -28,6 +40,12 @@ export interface PedidoRepository {
     data: { idUsuario: number; total: number; status: string; dataPedido: Date },
     items: Array<CreateItemPedidoInput & { subtotal: number }>,
     stockUpdates: StockUpdate[]
+  ): Promise<Pedido>;
+  createWithItemsStockAndTicket(
+    data: { idUsuario: number; total: number; status: string; dataPedido: Date },
+    items: Array<CreateItemPedidoInput & { subtotal: number }>,
+    stockUpdates: StockUpdate[],
+    ingresso: CreatePedidoIngressoInput
   ): Promise<Pedido>;
   addItemWithStockUpdate(
     idPedido: number,

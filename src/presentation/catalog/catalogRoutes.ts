@@ -7,6 +7,7 @@ import { ListMovieReviewsUseCase, ListUserReviewsUseCase } from "../../applicati
 import { UpdateReviewUseCase } from "../../application/catalog/UpdateReviewUseCase.js";
 import { config } from "../../config.js";
 import { authenticate } from "../../infra/http/middlewares/authenticate.js";
+import { authorize } from "../../infra/http/middlewares/authorize.js";
 import { optionalAuthenticate } from "../../infra/http/middlewares/optionalAuthenticate.js";
 import { PrismaCatalogRepository } from "../../infra/catalog/PrismaCatalogRepository.js";
 import { CatalogController } from "./CatalogController.js";
@@ -34,14 +35,14 @@ export const catalogRoutes = Router();
 export const reviewRoutes = Router();
 
 catalogRoutes.get("/", (req, res) => controller.listMovies(req, res));
-catalogRoutes.post("/", authenticate, (req, res) => controller.createMovie(req, res));
+catalogRoutes.post("/", authenticate, authorize("ADMIN"), (req, res) => controller.createMovie(req, res));
 catalogRoutes.get("/:id", optionalAuthenticate, (req, res) => controller.getMovieDetail(req, res));
 catalogRoutes.get("/:id/avaliacoes", (req, res) => controller.listMovieReviews(req, res));
 catalogRoutes.post("/:id/avaliacoes", authenticate, (req, res) => controller.createMovieReview(req, res));
 
+reviewRoutes.get("/minhas", authenticate, (req, res) => controller.listUserReviews(req, res));
 reviewRoutes.patch("/:id", authenticate, (req, res) => controller.updateReview(req, res));
 reviewRoutes.delete("/:id", authenticate, (req, res) => controller.deleteReview(req, res));
-reviewRoutes.get("/minhas", authenticate, (req, res) => controller.listUserReviews(req, res));
 
-catalogRoutes.patch("/:id", authenticate, (req, res) => controller.updateMovie(req, res));
-catalogRoutes.delete("/:id", authenticate, (req, res) => controller.deleteMovie(req, res));
+catalogRoutes.patch("/:id", authenticate, authorize("ADMIN"), (req, res) => controller.updateMovie(req, res));
+catalogRoutes.delete("/:id", authenticate, authorize("ADMIN"), (req, res) => controller.deleteMovie(req, res));

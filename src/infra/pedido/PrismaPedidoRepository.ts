@@ -187,6 +187,66 @@ export class PrismaPedidoRepository implements PedidoRepository {
     });
   }
 
+  async createWithItemsStockAndTicket(
+    data: { idUsuario: number; total: number; status: string; dataPedido: Date },
+    items: Array<{ idProduto: number | null; idCombo: number | null; quantidade: number; precoUnitario: number; subtotal: number }>,
+    stockUpdates: StockUpdate[],
+    ingresso: {
+      idSessao: number;
+      idUsuario: number;
+      idAssento: number;
+      tipo: string;
+      preco: number;
+      status: string;
+      dataEmissao: Date;
+    }
+  ): Promise<Pedido> {
+    return await this.prisma.$transaction(async (tx) => {
+      await this.decrementStock(tx, stockUpdates);
+
+      const pedido = await tx.pedido.create({
+        data: {
+          idUsuario: data.idUsuario,
+          total: data.total,
+          status: data.status,
+          dataPedido: data.dataPedido,
+        },
+      });
+
+      for (const item of items) {
+        await tx.itemPedido.create({
+          data: {
+            idPedido: pedido.idPedido,
+            idProduto: item.idProduto,
+            idCombo: item.idCombo,
+            quantidade: item.quantidade,
+            precoUnitario: item.precoUnitario,
+            subtotal: item.subtotal,
+          },
+        });
+      }
+
+      await tx.ingresso.create({
+        data: {
+          idPedido: pedido.idPedido,
+          idSessao: ingresso.idSessao,
+          idUsuario: ingresso.idUsuario,
+          idAssento: ingresso.idAssento,
+          tipo: ingresso.tipo,
+          preco: ingresso.preco,
+          status: ingresso.status,
+          dataEmissao: ingresso.dataEmissao,
+        },
+      });
+
+      const completed = await tx.pedido.findUnique({
+        where: { idPedido: pedido.idPedido },
+        include: pedidoInclude,
+      });
+      return mapPedido(completed);
+    });
+  }
+
   async addItemWithStockUpdate(
     idPedido: number,
     item: { idProduto: number | null; idCombo: number | null; quantidade: number; precoUnitario: number; subtotal: number },

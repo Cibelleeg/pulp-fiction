@@ -16,6 +16,9 @@ export class AdicionarItemAoPedidoUseCase {
   async execute(idPedido: number, itemInput: CreateItemPedidoInput): Promise<ItemPedido> {
     const pedido = await this.pedidoRepository.findById(idPedido);
     if (!pedido) throw new Error(`Pedido ${idPedido} not found.`);
+    if (pedido.status === "CANCELADO") {
+      throw new Error("Cannot add items to a cancelled order.");
+    }
 
     if (!Number.isInteger(itemInput.quantidade) || itemInput.quantidade <= 0) {
       throw new Error("Item quantity must be greater than zero.");

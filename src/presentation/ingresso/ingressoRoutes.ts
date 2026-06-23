@@ -2,18 +2,21 @@ import { Router } from "express";
 import { authenticate } from "../../infra/http/middlewares/authenticate.js";
 import { ComprarIngressoUseCase } from "../../application/ingresso/ComprarIngressoUseCase.js";
 import { PrismaIngressoRepository } from "../../infra/ingresso/PrismaIngressoRepository.js";
+import { PrismaPedidoRepository } from "../../infra/pedido/PrismaPedidoRepository.js";
 import { PrismaSessionRepository } from "../../infra/session/PrismaSessionRepository.js";
 import { PrismaUserRepository } from "../../infra/user/PrismaUserRepository.js";
 import { PrismaCatalogRepository } from "../../infra/catalog/PrismaCatalogRepository.js";
 import { IngressoController } from "./IngressoController.js";
 
 const ingressoRepository = new PrismaIngressoRepository();
+const pedidoRepository = new PrismaPedidoRepository();
 const sessionRepository = new PrismaSessionRepository();
 const userRepository = new PrismaUserRepository();
 const movieRepository = new PrismaCatalogRepository();
 
 const comprarIngressoUseCase = new ComprarIngressoUseCase(
   ingressoRepository,
+  pedidoRepository,
   sessionRepository,
   userRepository,
   movieRepository

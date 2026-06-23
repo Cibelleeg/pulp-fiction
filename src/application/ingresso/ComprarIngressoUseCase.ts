@@ -5,6 +5,7 @@ import { Usuario } from "../../domain/user/User.js";
 import { TypeIngresso } from "../../domain/ticketType/TicketType.js";
 import type { Ingresso } from "../../domain/ingresso/Ingresso.js";
 import type { IngressoRepository } from "./IngressoRepository.js";
+import type { PedidoRepository } from "../pedido/PedidoRepository.js";
 import type { SessionRepository } from "../session/SessionRepository.js";
 import type { UserRepository } from "../user/UserRepository.js";
 import type { CatalogRepository as MovieRepository } from "../catalog/CatalogRepository.js";
@@ -20,6 +21,7 @@ export type ComprarIngressoInput = {
 export class ComprarIngressoUseCase {
   constructor(
     private ingressoRepository: IngressoRepository,
+    private pedidoRepository: PedidoRepository,
     private sessionRepository: SessionRepository,
     private userRepository: UserRepository,
     private movieRepository: MovieRepository
@@ -48,6 +50,21 @@ export class ComprarIngressoUseCase {
 
     if (!sessao.estaAberta()) {
       throw new DomainError("Sessão encerrada.");
+    }
+
+    if (!sessao.temAssentoDisponivel()) {
+      throw new DomainError("Sessão esgotada.");
+    }
+
+    const pedido = await this.pedidoRepository.findById(input.idPedido);
+    if (!pedido) {
+      throw new DomainError("Pedido não encontrado.");
+    }
+    if (pedido.idUsuario !== input.idUsuario) {
+      throw new DomainError("Pedido não pertence ao usuário autenticado.");
+    }
+    if (pedido.status === "CANCELADO") {
+      throw new DomainError("Pedido cancelado não pode receber ingresso.");
     }
 
     const usuarioData = await this.userRepository.findById(input.idUsuario);
@@ -86,15 +103,11 @@ export class ComprarIngressoUseCase {
       throw new DomainError("Assento já ocupado.");
     }
 
-    if (input.tipo === TypeIngresso.MEIA) {
-      const meiaVendidas = await this.ingressoRepository.countMeiasBySessao(input.idSessao);
-      const limitesMeia = Math.floor(sessao.totalSeats * 0.4);
-      if (meiaVendidas >= limitesMeia) {
-        throw new DomainError("Limite de meia-entrada atingido.");
-      }
-    }
+    const meiasVendidas = input.tipo === TypeIngresso.MEIA
+      ? await this.ingressoRepository.countMeiasBySessao(input.idSessao)
+      : 0;
 
-    const preco = sessao.calcularPreco(input.tipo);
+    const preco = sessao.calcularPreco(input.tipo, meiasVendidas);
 
     return await this.ingressoRepository.create({
       idSessao: input.idSessao,

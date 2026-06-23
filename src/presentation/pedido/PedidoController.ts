@@ -4,12 +4,16 @@ import type { AdicionarItemAoPedidoUseCase } from "../../application/pedido/Adic
 import type { GetPedidoByIdUseCase, GetPedidosByUsuarioUseCase } from "../../application/pedido/GetPedidoUseCase.js";
 import type { CancelarPedidoUseCase } from "../../application/pedido/CancelarPedidoUseCase.js";
 import type { DeletePedidoUseCase } from "../../application/pedido/DeletePedidoUseCase.js";
+import type { FinalizarCompraUseCase } from "../../application/pedido/FinalizarCompraUseCase.js";
+import { DomainError } from "../../domain/error/DomainError.js";
 import { EstoqueInsuficienteError } from "../../domain/products/estoque.js";
+import { TypeIngresso } from "../../domain/ticketType/TicketType.js";
 
 export class PedidoController {
   constructor(
     private criarPedidoUseCase: CriarPedidoUseCase,
     private adicionarItemUseCase: AdicionarItemAoPedidoUseCase,
+    private finalizarCompraUseCase: FinalizarCompraUseCase,
     private getPedidoByIdUseCase: GetPedidoByIdUseCase,
     private getPedidosByUsuarioUseCase: GetPedidosByUsuarioUseCase,
     private cancelarPedidoUseCase: CancelarPedidoUseCase,
@@ -55,6 +59,61 @@ export class PedidoController {
 
       res.status(201).json(pedido);
     } catch (error) {
+      if (error instanceof EstoqueInsuficienteError) {
+        res.status(422).json({ error: error.message });
+        return;
+      }
+      if (error instanceof Error) {
+        res.status(400).json({ error: error.message });
+        return;
+      }
+      res.status(500).json({ error: "Internal Server Error." });
+    }
+  }
+
+  async finalizarCompra(req: Request, res: Response): Promise<void> {
+    try {
+      if (!req.user) {
+        res.status(401).json({ error: "Unauthorized." });
+        return;
+      }
+
+      const { idSessao, idAssento, tipo, itens } = req.body as {
+        idSessao?: number;
+        idAssento?: number;
+        tipo?: TypeIngresso;
+        itens?: Array<{ idProduto?: number | null; idCombo?: number | null; quantidade: number; precoUnitario?: number }>;
+      };
+
+      if (!idSessao || !idAssento || !tipo) {
+        res.status(400).json({ error: "Campos obrigatórios: idSessao, idAssento, tipo." });
+        return;
+      }
+
+      if (!Object.values(TypeIngresso).includes(tipo)) {
+        res.status(400).json({ error: `Tipo de ingresso inválido. Use: ${Object.values(TypeIngresso).join(", ")}.` });
+        return;
+      }
+
+      const pedido = await this.finalizarCompraUseCase.execute({
+        idUsuario: req.user.id,
+        idSessao: Number(idSessao),
+        idAssento: Number(idAssento),
+        tipo,
+        itens: (itens ?? []).map((item) => ({
+          idProduto: item.idProduto != null ? Number(item.idProduto) : null,
+          idCombo: item.idCombo != null ? Number(item.idCombo) : null,
+          quantidade: Number(item.quantidade),
+          ...(item.precoUnitario !== undefined && { precoUnitario: item.precoUnitario }),
+        })),
+      });
+
+      res.status(201).json(pedido);
+    } catch (error) {
+      if (error instanceof DomainError) {
+        res.status(422).json({ error: error.message });
+        return;
+      }
       if (error instanceof EstoqueInsuficienteError) {
         res.status(422).json({ error: error.message });
         return;

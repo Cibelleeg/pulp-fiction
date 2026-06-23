@@ -3,8 +3,13 @@ import { PedidoController } from "./PedidoController.js";
 import { PrismaPedidoRepository } from "../../infra/pedido/PrismaPedidoRepository.js";
 import { PrismaProductRepository } from "../../infra/products/PrismaProductRepository.js";
 import { PrismaComboRepository } from "../../infra/combo/PrismaComboRepository.js";
+import { PrismaCatalogRepository } from "../../infra/catalog/PrismaCatalogRepository.js";
+import { PrismaIngressoRepository } from "../../infra/ingresso/PrismaIngressoRepository.js";
+import { PrismaSessionRepository } from "../../infra/session/PrismaSessionRepository.js";
+import { PrismaUserRepository } from "../../infra/user/PrismaUserRepository.js";
 import { CriarPedidoUseCase } from "../../application/pedido/CriarPedidoUseCase.js";
 import { AdicionarItemAoPedidoUseCase } from "../../application/pedido/AdicionarItemAoPedidoUseCase.js";
+import { FinalizarCompraUseCase } from "../../application/pedido/FinalizarCompraUseCase.js";
 import { GetPedidoByIdUseCase, GetPedidosByUsuarioUseCase } from "../../application/pedido/GetPedidoUseCase.js";
 import { CancelarPedidoUseCase } from "../../application/pedido/CancelarPedidoUseCase.js";
 import { DeletePedidoUseCase } from "../../application/pedido/DeletePedidoUseCase.js";
@@ -14,10 +19,23 @@ import { authorize } from "../../infra/http/middlewares/authorize.js";
 const pedidoRepository = new PrismaPedidoRepository();
 const productRepository = new PrismaProductRepository();
 const comboRepository = new PrismaComboRepository();
+const catalogRepository = new PrismaCatalogRepository();
+const ingressoRepository = new PrismaIngressoRepository();
+const sessionRepository = new PrismaSessionRepository();
+const userRepository = new PrismaUserRepository();
 
 const controller = new PedidoController(
   new CriarPedidoUseCase(pedidoRepository, productRepository, comboRepository),
   new AdicionarItemAoPedidoUseCase(pedidoRepository, productRepository, comboRepository),
+  new FinalizarCompraUseCase(
+    pedidoRepository,
+    ingressoRepository,
+    sessionRepository,
+    userRepository,
+    catalogRepository,
+    productRepository,
+    comboRepository
+  ),
   new GetPedidoByIdUseCase(pedidoRepository),
   new GetPedidosByUsuarioUseCase(pedidoRepository),
   new CancelarPedidoUseCase(pedidoRepository),
@@ -27,6 +45,7 @@ const controller = new PedidoController(
 export const pedidoRoutes = Router();
 
 pedidoRoutes.post("/", authenticate, (req, res) => controller.criarPedido(req, res));
+pedidoRoutes.post("/finalizar", authenticate, (req, res) => controller.finalizarCompra(req, res));
 pedidoRoutes.post("/:id/itens", authenticate, (req, res) => controller.adicionarItem(req, res));
 pedidoRoutes.get("/me", authenticate, (req, res) => controller.getMeusPedidos(req, res));
 pedidoRoutes.get("/usuario/:idUsuario", authenticate, (req, res) => controller.getPedidosByUsuario(req, res));

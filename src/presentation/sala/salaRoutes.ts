@@ -22,8 +22,8 @@ const salaController = new SalaController(
 export const salaRoutes = Router();
 
 salaRoutes.get("/", (req, res) => salaController.getSalas(req, res));
-salaRoutes.get("/:id", (req, res) => salaController.getSalaById(req, res));
 salaRoutes.get("/cinema/:idCinema", (req, res) => salaController.getSalasByCinema(req, res));
+salaRoutes.get("/:id", (req, res) => salaController.getSalaById(req, res));
 salaRoutes.post("/", authenticate, authorize("ADMIN"), (req, res) => salaController.createSala(req, res));
 salaRoutes.patch("/:id", authenticate, authorize("ADMIN"), (req, res) => salaController.updateSala(req, res));
 salaRoutes.delete("/:id", authenticate, authorize("ADMIN"), (req, res) => salaController.deleteSala(req, res));
