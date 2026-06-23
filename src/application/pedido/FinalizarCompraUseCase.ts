@@ -18,7 +18,7 @@ import type { UserRepository } from "../user/UserRepository.js";
 export type FinalizarCompraInput = {
   idUsuario: number;
   idSessao: number;
-  idAssento: number;
+  idAssentos: number[];
   tipo: TypeIngresso;
   itens: Array<{
     idProduto?: number | null;
@@ -50,16 +50,21 @@ export class FinalizarCompraUseCase {
       throw new DomainError("Classificação indicativa não permite a compra para este usuário.");
     }
 
-    const assentoOcupado = await this.ingressoRepository.findBySessaoAndAssento(input.idSessao, input.idAssento);
-    if (assentoOcupado) throw new DomainError("Assento já ocupado.");
+    const idAssentos = [...new Set(input.idAssentos)];
+    if (idAssentos.length === 0) throw new DomainError("Selecione ao menos um assento.");
+
+    for (const idAssento of idAssentos) {
+      const assentoOcupado = await this.ingressoRepository.findBySessaoAndAssento(input.idSessao, idAssento);
+      if (assentoOcupado) throw new DomainError(`Assento ${idAssento} já ocupado.`);
+    }
 
     const meiasVendidas = input.tipo === TypeIngresso.MEIA
       ? await this.ingressoRepository.countMeiasBySessao(input.idSessao)
       : 0;
-    const precoIngresso = sessao.calcularPreco(input.tipo, meiasVendidas);
+    const precoIngresso = sessao.calcularPreco(input.tipo, meiasVendidas, idAssentos.length);
 
     const { itensComSubtotal, stockUpdates } = await this.prepararItens(input.itens ?? []);
-    const total = calcularTotal(itensComSubtotal) + precoIngresso;
+    const total = calcularTotal(itensComSubtotal) + (precoIngresso * idAssentos.length);
 
     return this.pedidoRepository.createWithItemsStockAndTicket(
       {
@@ -70,15 +75,15 @@ export class FinalizarCompraUseCase {
       },
       itensComSubtotal,
       stockUpdates,
-      {
+      idAssentos.map((idAssento) => ({
         idSessao: input.idSessao,
         idUsuario: input.idUsuario,
-        idAssento: input.idAssento,
+        idAssento,
         tipo: input.tipo,
         preco: precoIngresso,
         status: "ATIVO",
         dataEmissao: new Date(),
-      }
+      }))
     );
   }
 

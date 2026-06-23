@@ -26,14 +26,14 @@ export class Sessao {
     return this.availableSeats > 0;
   }
 
-  podeVenderMeia(meiasVendidas: number): boolean {
+  podeVenderMeia(meiasVendidas: number, quantidade = 1): boolean {
     const limite = Math.floor(this.totalSeats * 0.4);
-    return meiasVendidas < limite;
+    return meiasVendidas + quantidade <= limite;
   }
 
-  calcularPreco(tipo: TypeIngresso, meiasVendidas = 0): number {
+  calcularPreco(tipo: TypeIngresso, meiasVendidas = 0, quantidade = 1): number {
     if (tipo === TypeIngresso.MEIA) {
-      if (!this.podeVenderMeia(meiasVendidas)) {
+      if (!this.podeVenderMeia(meiasVendidas, quantidade)) {
         throw new DomainError("Limite de meia-entrada atingido para esta sessão.");
       }
       return Math.floor(this.basePrice / 2);

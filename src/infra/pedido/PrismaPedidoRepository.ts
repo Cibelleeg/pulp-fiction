@@ -191,7 +191,7 @@ export class PrismaPedidoRepository implements PedidoRepository {
     data: { idUsuario: number; total: number; status: string; dataPedido: Date },
     items: Array<{ idProduto: number | null; idCombo: number | null; quantidade: number; precoUnitario: number; subtotal: number }>,
     stockUpdates: StockUpdate[],
-    ingresso: {
+    ingressos: Array<{
       idSessao: number;
       idUsuario: number;
       idAssento: number;
@@ -199,7 +199,7 @@ export class PrismaPedidoRepository implements PedidoRepository {
       preco: number;
       status: string;
       dataEmissao: Date;
-    }
+    }>
   ): Promise<Pedido> {
     return await this.prisma.$transaction(async (tx) => {
       await this.decrementStock(tx, stockUpdates);
@@ -226,18 +226,20 @@ export class PrismaPedidoRepository implements PedidoRepository {
         });
       }
 
-      await tx.ingresso.create({
-        data: {
-          idPedido: pedido.idPedido,
-          idSessao: ingresso.idSessao,
-          idUsuario: ingresso.idUsuario,
-          idAssento: ingresso.idAssento,
-          tipo: ingresso.tipo,
-          preco: ingresso.preco,
-          status: ingresso.status,
-          dataEmissao: ingresso.dataEmissao,
-        },
-      });
+      for (const ingresso of ingressos) {
+        await tx.ingresso.create({
+          data: {
+            idPedido: pedido.idPedido,
+            idSessao: ingresso.idSessao,
+            idUsuario: ingresso.idUsuario,
+            idAssento: ingresso.idAssento,
+            tipo: ingresso.tipo,
+            preco: ingresso.preco,
+            status: ingresso.status,
+            dataEmissao: ingresso.dataEmissao,
+          },
+        });
+      }
 
       const completed = await tx.pedido.findUnique({
         where: { idPedido: pedido.idPedido },

@@ -45,7 +45,7 @@ export interface PedidoRepository {
     data: { idUsuario: number; total: number; status: string; dataPedido: Date },
     items: Array<CreateItemPedidoInput & { subtotal: number }>,
     stockUpdates: StockUpdate[],
-    ingresso: CreatePedidoIngressoInput
+    ingressos: CreatePedidoIngressoInput[]
   ): Promise<Pedido>;
   addItemWithStockUpdate(
     idPedido: number,

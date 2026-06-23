@@ -78,15 +78,20 @@ export class PedidoController {
         return;
       }
 
-      const { idSessao, idAssento, tipo, itens } = req.body as {
+      const { idSessao, idAssento, idAssentos, tipo, itens } = req.body as {
         idSessao?: number;
         idAssento?: number;
+        idAssentos?: number[];
         tipo?: TypeIngresso;
         itens?: Array<{ idProduto?: number | null; idCombo?: number | null; quantidade: number; precoUnitario?: number }>;
       };
 
-      if (!idSessao || !idAssento || !tipo) {
-        res.status(400).json({ error: "Campos obrigatórios: idSessao, idAssento, tipo." });
+      const assentosSelecionados = Array.isArray(idAssentos) && idAssentos.length > 0
+        ? idAssentos.map(Number)
+        : idAssento ? [Number(idAssento)] : [];
+
+      if (!idSessao || assentosSelecionados.length === 0 || !tipo) {
+        res.status(400).json({ error: "Campos obrigatórios: idSessao, idAssentos, tipo." });
         return;
       }
 
@@ -98,7 +103,7 @@ export class PedidoController {
       const pedido = await this.finalizarCompraUseCase.execute({
         idUsuario: req.user.id,
         idSessao: Number(idSessao),
-        idAssento: Number(idAssento),
+        idAssentos: assentosSelecionados,
         tipo,
         itens: (itens ?? []).map((item) => ({
           idProduto: item.idProduto != null ? Number(item.idProduto) : null,
