@@ -18,7 +18,12 @@ export class CriarPedidoUseCase {
       throw new Error("Invalid user ID.");
     }
     if (data.itens.length === 0) {
-      throw new Error("Order must have at least one item.");
+      return await this.pedidoRepository.create({
+        idUsuario: data.idUsuario,
+        total: 0,
+        status: "ABERTO",
+        dataPedido: new Date(),
+      });
     }
 
     const itensComSubtotal: Array<{

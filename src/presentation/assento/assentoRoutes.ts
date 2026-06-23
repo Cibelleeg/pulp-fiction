@@ -22,8 +22,8 @@ const assentoController = new AssentoController(
 export const assentoRoutes = Router();
 
 assentoRoutes.get("/", (req, res) => assentoController.getAssentos(req, res));
-assentoRoutes.get("/:id", (req, res) => assentoController.getAssentoById(req, res));
 assentoRoutes.get("/sala/:idSala", (req, res) => assentoController.getAssentosBySala(req, res));
+assentoRoutes.get("/:id", (req, res) => assentoController.getAssentoById(req, res));
 assentoRoutes.post("/", authenticate, authorize("ADMIN"), (req, res) => assentoController.createAssento(req, res));
 assentoRoutes.patch("/:id", authenticate, authorize("ADMIN"), (req, res) => assentoController.updateAssento(req, res));
 assentoRoutes.delete("/:id", authenticate, authorize("ADMIN"), (req, res) => assentoController.deleteAssento(req, res));
