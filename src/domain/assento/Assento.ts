@@ -4,4 +4,5 @@ export interface Assento {
   numero: string;
   fila: string;
   tipo: string;
+  ocupado?: boolean;
 }

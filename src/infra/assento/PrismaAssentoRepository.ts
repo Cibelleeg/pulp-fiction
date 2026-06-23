@@ -15,6 +15,7 @@ type PrismaAssento = {
   numero: string;
   fila: string;
   tipo: string;
+  ocupado?: boolean;
 };
 
 export class PrismaAssentoRepository implements AssentoRepository {
@@ -37,6 +38,36 @@ export class PrismaAssentoRepository implements AssentoRepository {
       orderBy: [{ fila: "asc" }, { numero: "asc" }],
     });
     return assentos.map(this.toDomain);
+  }
+
+  async findBySessao(idSessao: number): Promise<Assento[]> {
+    const sessao = await this.prisma.sessao.findUnique({
+      where: { idSessao },
+      select: { idSala: true },
+    });
+
+    if (!sessao) return [];
+
+    const [assentos, ingressos] = await Promise.all([
+      this.prisma.assento.findMany({
+        where: { idSala: sessao.idSala },
+        orderBy: [{ fila: "asc" }, { numero: "asc" }],
+      }),
+      this.prisma.ingresso.findMany({
+        where: {
+          idSessao,
+          status: { not: "CANCELADO" },
+        },
+        select: { idAssento: true },
+      }),
+    ]);
+
+    const ocupados = new Set(ingressos.map((ingresso) => ingresso.idAssento));
+
+    return assentos.map((assento) => this.toDomain({
+      ...assento,
+      ocupado: ocupados.has(assento.idAssento),
+    }));
   }
 
   async create(data: CreateAssentoInput): Promise<Assento> {
@@ -69,12 +100,18 @@ export class PrismaAssentoRepository implements AssentoRepository {
   }
 
   private toDomain(assento: PrismaAssento): Assento {
-    return {
+    const domain: Assento = {
       id: assento.idAssento,
       idSala: assento.idSala,
       numero: assento.numero,
       fila: assento.fila,
       tipo: assento.tipo,
     };
+
+    if (assento.ocupado !== undefined) {
+      domain.ocupado = assento.ocupado;
+    }
+
+    return domain;
   }
 }

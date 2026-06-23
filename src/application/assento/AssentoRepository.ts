@@ -13,6 +13,7 @@ export interface AssentoRepository {
   findAll(): Promise<Assento[]>;
   findById(id: number): Promise<Assento | null>;
   findBySala(idSala: number): Promise<Assento[]>;
+  findBySessao(idSessao: number): Promise<Assento[]>;
   create(data: CreateAssentoInput): Promise<Assento>;
   updateById(id: number, data: UpdateAssentoInput): Promise<Assento>;
   deleteById(id: number): Promise<void>;

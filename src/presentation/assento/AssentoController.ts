@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
 import type { CreateAssentoUseCase } from "../../application/assento/CreateAssentoUseCase.js";
-import type { GetAssentoByIdUseCase, GetAssentosBySalaUseCase, GetAssentosUseCase } from "../../application/assento/GetAssentosUseCase.js";
+import type { GetAssentoByIdUseCase, GetAssentosBySalaUseCase, GetAssentosBySessaoUseCase, GetAssentosUseCase } from "../../application/assento/GetAssentosUseCase.js";
 import type { UpdateAssentoUseCase } from "../../application/assento/UpdateAssentoUseCase.js";
 import type { DeleteAssentoUseCase } from "../../application/assento/DeleteAssentoUseCase.js";
 
@@ -10,6 +10,7 @@ export class AssentoController {
     private getAssentosUseCase: GetAssentosUseCase,
     private getAssentoByIdUseCase: GetAssentoByIdUseCase,
     private getAssentosBySalaUseCase: GetAssentosBySalaUseCase,
+    private getAssentosBySessaoUseCase: GetAssentosBySessaoUseCase,
     private updateAssentoUseCase: UpdateAssentoUseCase,
     private deleteAssentoUseCase: DeleteAssentoUseCase
   ) {}
@@ -74,6 +75,21 @@ export class AssentoController {
       }
 
       const assentos = await this.getAssentosBySalaUseCase.execute(idSala);
+      res.status(200).json(assentos);
+    } catch (error) {
+      res.status(500).json({ error: "Internal Server Error." });
+    }
+  }
+
+  async getAssentosBySessao(req: Request, res: Response): Promise<void> {
+    try {
+      const idSessao = Number(req.params.idSessao);
+      if (isNaN(idSessao)) {
+        res.status(400).json({ error: "ID da sessão inválido." });
+        return;
+      }
+
+      const assentos = await this.getAssentosBySessaoUseCase.execute(idSessao);
       res.status(200).json(assentos);
     } catch (error) {
       res.status(500).json({ error: "Internal Server Error." });

@@ -21,3 +21,10 @@ export class GetAssentosBySalaUseCase {
     return this.assentoRepository.findBySala(idSala);
   }
 }
+
+export class GetAssentosBySessaoUseCase {
+  constructor(private assentoRepository: AssentoRepository) {}
+  async execute(idSessao: number): Promise<Assento[]> {
+    return this.assentoRepository.findBySessao(idSessao);
+  }
+}
