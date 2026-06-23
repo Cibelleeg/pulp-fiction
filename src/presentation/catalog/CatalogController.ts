@@ -4,7 +4,7 @@ import type { CreateMovieReviewUseCase } from "../../application/catalog/CreateM
 import type { DeleteReviewUseCase } from "../../application/catalog/DeleteReviewUseCase.js";
 import type { GetCatalogMovieDetailUseCase } from "../../application/catalog/GetCatalogMovieDetailUseCase.js";
 import type { ListCatalogMoviesUseCase } from "../../application/catalog/ListCatalogMoviesUseCase.js";
-import type { ListMovieReviewsUseCase } from "../../application/catalog/ListMovieReviewsUseCase.js";
+import type { ListMovieReviewsUseCase, ListUserReviewsUseCase } from "../../application/catalog/ListMovieReviewsUseCase.js";
 import { ReviewForbiddenError, ReviewNotFoundError } from "../../application/catalog/UpdateReviewUseCase.js";
 import type { UpdateReviewUseCase } from "../../application/catalog/UpdateReviewUseCase.js";
 import { NotaInvalidaError } from "../../domain/catalog/Review.js";
@@ -17,6 +17,7 @@ export class CatalogController {
     private listCatalogMoviesUseCase: ListCatalogMoviesUseCase,
     private getCatalogMovieDetailUseCase: GetCatalogMovieDetailUseCase,
     private listMovieReviewsUseCase: ListMovieReviewsUseCase,
+    private listUserReviewsUseCase: ListUserReviewsUseCase,
     private createMovieReviewUseCase: CreateMovieReviewUseCase,
     private updateReviewUseCase: UpdateReviewUseCase,
     private deleteReviewUseCase: DeleteReviewUseCase,
@@ -103,6 +104,20 @@ export class CatalogController {
       const pageSize = Math.min(this.positiveInt(req.query.pageSize, 10), 50);
       const result = await this.listMovieReviewsUseCase.execute(idFilme, page, pageSize);
 
+      res.status(200).json(result);
+    } catch {
+      res.status(500).json({ error: "Internal Server Error." });
+    }
+  }
+
+  async listUserReviews(req: Request, res: Response): Promise<void> {
+    try {
+      if (!req.user) {
+        res.status(401).json({ error: "Unauthorized." });
+        return;
+      }
+
+      const result = await this.listUserReviewsUseCase.execute(req.user.id);
       res.status(200).json(result);
     } catch {
       res.status(500).json({ error: "Internal Server Error." });

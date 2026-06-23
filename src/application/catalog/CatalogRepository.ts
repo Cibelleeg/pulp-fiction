@@ -78,6 +78,17 @@ export type ReviewListItem = {
   createdAt: Date;
 };
 
+export type UserReviewListItem = {
+  id: number;
+  idFilme: number;
+  filme: {
+    titulo: string;
+  };
+  nota: number;
+  comentario: string | null;
+  createdAt: Date;
+};
+
 export type StoredReview = {
   id: number;
   idUsuario: number;
@@ -94,6 +105,7 @@ export interface CatalogRepository {
   findReviewByUserAndMovie(idUsuario: number, idFilme: number): Promise<StoredReview | null>;
   findReviewById(idAvaliacao: number): Promise<StoredReview | null>;
   listReviewsByMovie(idFilme: number, page: number, pageSize: number): Promise<{ data: ReviewListItem[]; total: number }>;
+  listReviewsByUser(idUsuario: number): Promise<UserReviewListItem[]>;
   createReview(data: { idUsuario: number; idFilme: number; nota: number; comentario: string | null }): Promise<StoredReview>;
   updateReview(idAvaliacao: number, data: { nota: number; comentario: string | null }): Promise<StoredReview>;
   deleteReview(idAvaliacao: number): Promise<void>;

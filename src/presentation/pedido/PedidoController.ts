@@ -158,6 +158,20 @@ export class PedidoController {
     }
   }
 
+  async getMeusPedidos(req: Request, res: Response): Promise<void> {
+    try {
+      if (!req.user) {
+        res.status(401).json({ error: "Unauthorized." });
+        return;
+      }
+
+      const pedidos = await this.getPedidosByUsuarioUseCase.execute(req.user.id);
+      res.status(200).json(pedidos);
+    } catch (error) {
+      res.status(500).json({ error: "Internal Server Error." });
+    }
+  }
+
   async cancelarPedido(req: Request, res: Response): Promise<void> {
     try {
       const id = Number(req.params.id);

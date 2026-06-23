@@ -1,4 +1,4 @@
-import type { CatalogRepository, ReviewListItem } from "./CatalogRepository.js";
+import type { CatalogRepository, ReviewListItem, UserReviewListItem } from "./CatalogRepository.js";
 
 export type ListMovieReviewsOutput = {
   data: ReviewListItem[];
@@ -18,5 +18,13 @@ export class ListMovieReviewsUseCase {
       page,
       pageSize,
     };
+  }
+}
+
+export class ListUserReviewsUseCase {
+  constructor(private catalogRepository: CatalogRepository) {}
+
+  async execute(idUsuario: number): Promise<UserReviewListItem[]> {
+    return this.catalogRepository.listReviewsByUser(idUsuario);
   }
 }

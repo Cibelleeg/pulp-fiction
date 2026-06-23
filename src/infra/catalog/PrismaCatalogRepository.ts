@@ -9,6 +9,7 @@ import type {
   CatalogRepository,
   ReviewListItem,
   StoredReview,
+  UserReviewListItem,
 } from "../../application/catalog/CatalogRepository.js";
 import type { DistribuicaoAvaliacoes } from "../../domain/catalog/ReviewStats.js";
 
@@ -152,6 +153,33 @@ export class PrismaCatalogRepository implements CatalogRepository {
       })),
       total,
     };
+  }
+
+  async listReviewsByUser(idUsuario: number): Promise<UserReviewListItem[]> {
+    const reviews = await this.prisma.avaliacao.findMany({
+      where: { idUsuario },
+      include: {
+        filme: {
+          select: {
+            titulo: true,
+          },
+        },
+      },
+      orderBy: {
+        data_avaliacao: "desc",
+      },
+    });
+
+    return reviews.map((review: AvaliacaoRaw & { filme: { titulo: string } }) => ({
+      id: review.idAvaliacao,
+      idFilme: review.idFilme,
+      filme: {
+        titulo: review.filme.titulo,
+      },
+      nota: Number(review.nota),
+      comentario: review.comentario,
+      createdAt: review.data_avaliacao,
+    }));
   }
 
   async createReview(data: { idUsuario: number; idFilme: number; nota: number; comentario: string | null }): Promise<StoredReview> {

@@ -3,7 +3,7 @@ import { CreateMovieReviewUseCase } from "../../application/catalog/CreateMovieR
 import { DeleteReviewUseCase } from "../../application/catalog/DeleteReviewUseCase.js";
 import { GetCatalogMovieDetailUseCase } from "../../application/catalog/GetCatalogMovieDetailUseCase.js";
 import { ListCatalogMoviesUseCase } from "../../application/catalog/ListCatalogMoviesUseCase.js";
-import { ListMovieReviewsUseCase } from "../../application/catalog/ListMovieReviewsUseCase.js";
+import { ListMovieReviewsUseCase, ListUserReviewsUseCase } from "../../application/catalog/ListMovieReviewsUseCase.js";
 import { UpdateReviewUseCase } from "../../application/catalog/UpdateReviewUseCase.js";
 import { config } from "../../config.js";
 import { authenticate } from "../../infra/http/middlewares/authenticate.js";
@@ -21,6 +21,7 @@ const controller = new CatalogController(
   new ListCatalogMoviesUseCase(catalogRepository, minimoAvaliacoesRanking),
   new GetCatalogMovieDetailUseCase(catalogRepository, minimoAvaliacoesRanking),
   new ListMovieReviewsUseCase(catalogRepository),
+  new ListUserReviewsUseCase(catalogRepository),
   new CreateMovieReviewUseCase(catalogRepository),
   new UpdateReviewUseCase(catalogRepository),
   new DeleteReviewUseCase(catalogRepository),
@@ -40,7 +41,7 @@ catalogRoutes.post("/:id/avaliacoes", authenticate, (req, res) => controller.cre
 
 reviewRoutes.patch("/:id", authenticate, (req, res) => controller.updateReview(req, res));
 reviewRoutes.delete("/:id", authenticate, (req, res) => controller.deleteReview(req, res));
+reviewRoutes.get("/minhas", authenticate, (req, res) => controller.listUserReviews(req, res));
 
 catalogRoutes.patch("/:id", authenticate, (req, res) => controller.updateMovie(req, res));
 catalogRoutes.delete("/:id", authenticate, (req, res) => controller.deleteMovie(req, res));
-

@@ -3,7 +3,7 @@ import { PrismaClient } from "../../../generated/prisma/client.js";
 import { config } from "../../config.js";
 import { EstoqueInsuficienteError } from "../../domain/products/estoque.js";
 
-import type { Pedido, ItemPedido } from "../../domain/pedido/Pedido.js";
+import type { Pedido, ItemPedido, IngressoPedido } from "../../domain/pedido/Pedido.js";
 import type { PedidoRepository, StockUpdate } from "../../application/pedido/PedidoRepository.js";
 
 function createPrismaClient(): PrismaClient {
@@ -16,12 +16,57 @@ function mapItemPedido(raw: any): ItemPedido {
     idItemPedido: raw.idItemPedido,
     idPedido: raw.idPedido,
     idProduto: raw.idProduto ?? null,
+    produtoNome: raw.produto?.nome ?? null,
     idCombo: raw.idCombo ?? null,
+    comboNome: raw.combo?.nome ?? null,
     quantidade: raw.quantidade,
     precoUnitario: raw.precoUnitario,
     subtotal: raw.subtotal,
   };
 }
+
+function mapIngressoPedido(raw: any): IngressoPedido {
+  return {
+    idIngresso: raw.idIngresso,
+    idSessao: raw.idSessao,
+    idAssento: raw.idAssento,
+    tipo: raw.tipo,
+    preco: raw.preco,
+    status: raw.status,
+    dataEmissao: raw.dataEmissao,
+    filmeTitulo: raw.sessao?.filme?.titulo ?? null,
+    cinemaNome: raw.sessao?.sala?.cinema?.nome ?? null,
+    salaNome: raw.sessao?.sala?.nome ?? null,
+    assento: raw.assento ? `${raw.assento.fila}${raw.assento.numero}` : null,
+    dataHora: raw.sessao?.dataHora ?? null,
+    idioma: raw.sessao?.idioma ?? null,
+    formato: raw.sessao?.formato ?? null,
+  };
+}
+
+const pedidoInclude = {
+  itemPedido: {
+    include: {
+      produto: { select: { nome: true } },
+      combo: { select: { nome: true } },
+    },
+  },
+  ingressos: {
+    include: {
+      assento: true,
+      sessao: {
+        include: {
+          filme: { select: { titulo: true } },
+          sala: {
+            include: {
+              cinema: { select: { nome: true } },
+            },
+          },
+        },
+      },
+    },
+  },
+};
 
 function mapPedido(raw: any): Pedido {
   return {
@@ -31,6 +76,7 @@ function mapPedido(raw: any): Pedido {
     status: raw.status,
     dataPedido: raw.dataPedido,
     itens: raw.itemPedido?.map(mapItemPedido),
+    ingressos: raw.ingressos?.map(mapIngressoPedido),
   };
 }
 
@@ -58,7 +104,7 @@ export class PrismaPedidoRepository implements PedidoRepository {
   async findById(id: number): Promise<Pedido | null> {
     const pedido = await this.prisma.pedido.findUnique({
       where: { idPedido: id },
-      include: { itemPedido: true },
+      include: pedidoInclude,
     });
     if (!pedido) return null;
     return mapPedido(pedido);
@@ -67,7 +113,8 @@ export class PrismaPedidoRepository implements PedidoRepository {
   async findByUsuario(idUsuario: number): Promise<Pedido[]> {
     const pedidos = await this.prisma.pedido.findMany({
       where: { idUsuario },
-      include: { itemPedido: true },
+      include: pedidoInclude,
+      orderBy: { dataPedido: "desc" },
     });
     return pedidos.map(mapPedido);
   }
@@ -173,7 +220,7 @@ export class PrismaPedidoRepository implements PedidoRepository {
     const updated = await this.prisma.pedido.update({
       where: { idPedido },
       data: { status },
-      include: { itemPedido: true },
+      include: pedidoInclude,
     });
     return mapPedido(updated);
   }
