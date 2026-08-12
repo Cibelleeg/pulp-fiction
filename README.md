@@ -12,17 +12,6 @@ No estado atual, o repositorio concentra a modelagem do banco, a configuracao do
 - PostgreSQL
 - Docker Compose
 
-## Modelos do banco
-
-O schema atual contem as entidades:
-
-- `Cinema`
-- `Endereco`
-- `Usuario`
-- `Funcionario`
-
-As migrations ficam em `prisma/migrations` e o schema principal esta em `prisma/schema.prisma`.
-
 ## Requisitos
 
 - Node.js 20 ou superior
